@@ -1,1 +1,1 @@
-Just the code from solveing LeetCode problems.
+Just the code from solving LeetCode problems.
