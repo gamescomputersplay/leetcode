@@ -11,34 +11,19 @@ class Solution(object):
         :rtype: List[int]
         """
 
-        # Sort the input data
-        nums_sorted = sorted(nums)
+        # Set will contain the difference to target for each number
+        missing = set()
 
-        # Initiate 2 pointers
-        low, high = 0, len(nums) - 1
+        # Go through all the numbers
+        for position, number in enumerate(nums):
 
-        # Initiate current sum (smallest + largest)
-        current_sum = nums_sorted[low] + nums_sorted[high]
+            # Did we see the difference just like this number
+            if number in missing:
+                # If we did, calculate which numbers were those
+                return [nums.index(target - number), position]
 
-        # Assumption was there is a solution,
-        # so we don't need to worry that this never happens
-        while current_sum != target:
-
-            # Depending on which way we off, either increase
-            # the low number or decrease the high number
-            if current_sum < target:
-                low += 1
-            elif current_sum > target:
-                high -= 1
-
-            current_sum = nums_sorted[low] + nums_sorted[high]
-
-        # The answer is the position of those number in the original list
-        first = nums.index(nums_sorted[low])
-        # This is to make sure it is not the same index
-        second = nums.index(nums_sorted[high], first + 1)
-        
-        return [first, second]
+            # Add the difference to the set
+            missing.add(target - number)
 
 
 def main():
@@ -48,6 +33,7 @@ def main():
         ([2, 7, 11, 15], 9),  # [0, 1]
         ([3, 2, 4], 6),  # [1, 2]
         ([3, 3], 6),  # [0, 1]
+        ([-1,-2,-3,-4,-5], -8)
     ]
 
     solution = Solution()
