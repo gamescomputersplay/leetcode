@@ -98,13 +98,50 @@ class Solution(object):
         # Odd: Minimum element on the right is the median
         return float(min_right)
 
+def brute_median(list1, list2):
+    ''' Very simple way of solving the same problem.
+    Destructive to list1, but it's okay, we'll launch it last.
+    '''
+    list1.extend(list2)
+    list1.sort()
+    if len(list1) % 2 == 0:
+        return (list1[len(list1) // 2] + list1[(len(list1) // 2) - 1]) / 2
+    return float(list1[len(list1) // 2])
 
-            
-def main():
+def run_testcases(test_cases):
     ''' Manual test of findMedianSortedArrays
     '''
     solution = Solution()
 
+    for list1, list2 in test_cases:
+        # print(list1, list2)
+        result = solution.findMedianSortedArrays(list1, list2)
+        result_correct = result == brute_median(list1, list2)
+        print(result, result_correct)
+
+def generate_testcases(cases_to_generate):
+    ''' Randomly generated test cases
+    '''
+    def random_list(length, spread):
+        ''' Generate a random list
+        '''
+        return [random.randint(0, spread) for num in range(length)]
+
+    cases = []
+
+    while len(cases) < cases_to_generate:
+        list1 = random_list(random.randint(0, 10), random.randint(0, 10))
+        list2 = random_list(random.randint(0, 10), random.randint(0, 10))
+
+        if list1 or list2:
+            cases.append((list1, list2))
+
+    return cases
+
+if __name__ == "__main__":
+
+    import random 
+    random.seed(0)
     test_cases = [
         ([3], []), # 3
         ([1, 3, 5], []), # 3
@@ -120,10 +157,8 @@ def main():
         ([1, 2], [3, 4]), # 2.5
         ([1, 2, 3, 4], [5, 6, 7, 8]), # 5.5
     ]
+    #run_testcases(test_cases)
 
-    for list1, list2 in test_cases:
-        print(list1, list2)
-        print(solution.findMedianSortedArrays(list1, list2))
-
-if __name__ == "__main__":
-    main()
+    random_cases = generate_testcases(10)
+    print(random_cases)
+    run_testcases(random_cases)
