@@ -74,6 +74,31 @@ class Solution():
         # If no pali is found, return the first letter
         return s[0]
 
+    def longestPalindromeSlow(self, s):
+        """ Original impolementation.
+        Slow, but I'll use it for automated testing
+        """
+        # Go through all possible lengths of pali from the biggest to 2
+        for length in range(len(s), 1, -1):
+
+            # Go through all positions where pali of that length can occur
+            for start in range(0, len(s) - length + 1):
+
+                # From out in, go through pair of letters
+                for position in range(0, length // 2):
+                    
+                    # If letters are not the same - this is not
+                    # a pali, next position
+                    if s[start + position] != s[start + length - position - 1]:
+                        break
+
+                # If there was no mismatch - it is a pali, return it!
+                else:
+                    return s[start:start+length]
+
+        # If no pali is found, return the first letter
+        return s[0]
+
 
 def main():
     ''' Test longestPalindrome
