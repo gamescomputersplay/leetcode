@@ -9,6 +9,8 @@ class Solution():
         :rtype: str
         """
 
+        longest_pali = ""
+
         # Part 1: fast string search based on tokens
 
         token_size = 4
@@ -29,6 +31,11 @@ class Solution():
 
         # Go through the string again
         for i in range(len(s) - token_size + 1):
+
+            # Remaining string is shorter than longest pali we found
+            if len(s) - i <= len(longest_pali):
+                break
+
             # Generating straight tokens this time
             straight_token = s[i:i+token_size]
 
@@ -40,7 +47,10 @@ class Solution():
                 for end in reversed_tokens[straight_token]:
 
                     # Token should be "facing" each other, otherwise ignore them
-                    if end <= start:
+                    # Also if  potential pali is smaller than 2 tokens
+                    # or smaller than the longest pali we already have
+                    if end <= start or end - start < token_size * 2 or \
+                        end - start <= len(longest_pali):
                         continue
 
                     # And check if this string is a pali
@@ -48,8 +58,12 @@ class Solution():
                         if s[start + shift] != s[end - shift - 1]:
                             break
                     else:
-                        # Return the first found one (it should be the longest)
-                        return s[start:end]
+                        # Keep track of the longest match
+                        if end - start > len(longest_pali):
+                            longest_pali = s[start:end]
+
+        if longest_pali:
+            return longest_pali
 
         # Part 2: Look for palis smaller than the token size
 
@@ -61,7 +75,7 @@ class Solution():
 
                 # From out in, go through pair of letters
                 for position in range(0, length // 2):
-                    
+
                     # If letters are not the same - this is not
                     # a pali, next position
                     if s[start + position] != s[start + length - position - 1]:
@@ -75,7 +89,7 @@ class Solution():
         return s[0]
 
     def longestPalindromeSlow(self, s):
-        """ Original impolementation.
+        """ Original implementation.
         Slow, but I'll use it for automated testing
         """
         # Go through all possible lengths of pali from the biggest to 2
@@ -86,7 +100,7 @@ class Solution():
 
                 # From out in, go through pair of letters
                 for position in range(0, length // 2):
-                    
+
                     # If letters are not the same - this is not
                     # a pali, next position
                     if s[start + position] != s[start + length - position - 1]:
@@ -116,7 +130,8 @@ def main():
         "abcdefghijklmnopabbarstuvdcbawxyz",
         "abcdefghijklmnopqdcbarstuvwxyz",
         "glwhcebdjbdroiurzfxxrbhzibilmcfasshhtyngwrsnbdpzgjphujzuawbebyhvxfhtoozcitaqibvvowyluvdbvoqikgojxcefzpdgahujuxpiclrrmalncdrotsgkpnfyujgvmhydrzdpiudkfchtklsaprptkzhwxsgafsvkahkbsighlyhjvbburdfjdfvjbaiivqxdqwivsjzztzkzygcsyxlvvwlckbsmvwjvrhvqfewjxgefeowfhrcturolvfgxilqdqvitbcebuooclugypurlsbdfquzsqngbscqwlrdpxeahricvtfqpnrfwbyjvahrtosovsbzhxtutyfjwjbpkfujeoueykmbcjtluuxvmffwgqjgrtsxtdimsescgahnudmsmyfijtfrcbkibbypenxnpiozzrnljazjgrftitldcueswqitrcvjzvlhionutppppzxoepvtzhkzjetpfqsuirdcyqfjsqhdewswldawhdyijhpqtrwgyfmmyhhkrafisicstqxokdmynnnqxaekzcgygsuzfiguujyxowqdfylesbzhnpznayzlinerzdqjrylyfzndgqokovabhzuskwozuxcsmyclvfwkbimhkdmjacesnvorrrvdwcgfewchbsyzrkktsjxgyybgwbvktvxyurufsrdufcunnfswqddukqrxyrueienhccpeuqbkbumlpxnudmwqdkzvsqsozkifpznwapxaxdclxjxuciyulsbxvwdoiolgxkhlrytiwrpvtjdwsssahupoyyjveedgqsthefdyxvjweaimadykubntfqcpbjyqbtnunuxzyytxfedrycsdhkfymaykeubowvkszzwmbbjezrphqildkmllskfawmcohdqalgccffxursvbyikjoglnillapcbcjuhaxukfhalcslemluvornmijbeawxzokgnlzugxkshrpojrwaasgfmjvkghpdyxt",
-        "aaaabaaa",
+        "aabbbbbaaaaa",
+        "aaaaaaaaaaaaaabaaaaaaaaaaaaa",
     ]
 
     for string  in test_cases:
