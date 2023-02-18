@@ -3,7 +3,23 @@
 
 class Solution:
     def isPalindrome(self, x):
-        pass
+
+        # Negatives are not pali
+        if x < 0:
+            return False
+
+        # Make a copy we can mutate
+        original = x
+        opposite = 0
+
+        # Mathematically reverse the number
+        while original > 0:
+
+            opposite *= 10
+            opposite += original % 10
+            original //= 10
+
+        return x == opposite
 
 def main():
     ''' test reverse
@@ -14,6 +30,7 @@ def main():
         10,
         8778,
         8776,
+        0
     ]
 
     solution = Solution()
