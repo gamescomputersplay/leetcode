@@ -7,6 +7,42 @@ class Solution:
     def convert(self, s, numRows):
         ''' Do the string zigzagging
         '''
+        # Sanitize. Solution breaks with 1 row. Yet, it is trivial
+        if numRows == 1:
+            return s
+
+        # Lists, each representing a row
+        rows = [[] for _ in range(numRows)]
+        # Pointer to the row to put the next letter to
+        row_pointer = 0
+        # Increase that will determine the next row
+        pointer_inc = 1
+
+        # Go through the letters
+        for letter in s:
+
+            # Add it to the row
+            rows[row_pointer].append(letter)
+
+            # Modify pointer
+            row_pointer += pointer_inc
+
+            # If the pointer is on the edge, reverse it
+            if row_pointer == 0:
+                pointer_inc = 1
+            if row_pointer == numRows - 1:
+                pointer_inc = -1
+
+        # Combine lists into one string
+        output = ""
+        for row in rows:
+            for letter in row:
+                output += letter
+        return output
+
+    def convert_old(self, s, numRows):
+        ''' Do the string zigzagging
+        '''
 
         # First we put together all teh indexes here
         zigzag_indexes = []
@@ -39,6 +75,16 @@ class Solution:
         return "".join(zigzag_letters)
 
 
+
+def run_with_time(func):
+    ''' Time function func
+    '''
+
+    start = time.time()
+    for _ in range(10000):
+        func("ABCDEFGHIJKLMNOPQRSTUVWXYZ"*10, 10)
+    print(f"Done in {time.time() - start}")
+
 def main():
     ''' test convert
     '''
@@ -58,5 +104,11 @@ def main():
     for string, num_rows in test_cases:
         print(string, num_rows, solution.convert(string, num_rows))
 
+
+    run_with_time(solution.convert_old)
+    run_with_time(solution.convert)
+
+
 if __name__ == "__main__":
+    import time
     main()
