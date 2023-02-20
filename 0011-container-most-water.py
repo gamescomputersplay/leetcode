@@ -66,14 +66,23 @@ def main():
         [1, 1], #1
     ]
 
-    random_cases = [random_case(i) for i in range(5, 11)]
-
     solution = Solution()
-    for array in test_cases + random_cases:
+    for array in test_cases:
         print()
         print(array, solution.maxArea(array), solution.maxAreaBrute(array))
 
-
+def test_random_case():
+    ''' Test random cases with bruteforce
+    '''
+    random_cases = [random_case(i) for i in range(2, 101)]
+    solution = Solution()
+    for array in random_cases:
+        if solution.maxArea(array) != solution.maxAreaBrute(array):
+            print("Error")
+            print("Test case: ", array)
+            break
+    else:
+        print(f"{len(random_cases)} tested, all okay")
 
 def test_large_case():
     ''' The one that cases the timeout
@@ -92,4 +101,5 @@ if __name__ == "__main__":
     import random
     import time
     #main()
+    #test_random_case()
     test_large_case()
