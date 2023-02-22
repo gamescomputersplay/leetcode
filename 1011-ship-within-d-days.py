@@ -2,10 +2,17 @@
 '''
 
 class Solution:
+
+    def __init__(self):
+        self.cache = {}
+
     def is_shipping_possible(self, weights, capacity, days):
         ''' Is it possible to do the shipping with this
         capacity, in that many days
         '''
+        if capacity in self.cache:
+            return self.cache[capacity]
+
         pointer = 0
 
         # Simulate loading by going through all the days
@@ -23,17 +30,44 @@ class Solution:
 
                 # If we used up all weights - task is doable
                 if pointer == len(weights):
+                    self.cache[capacity] = True
                     return True
 
+        self.cache[capacity] = False
         return False
 
     def shipWithinDays(self, weights, days):
-        
-        return -1
+        ''' Now let's do it with binary search
+        '''
+        # Flush the cache
+        self.cache = {}
+
+        left = max(max(weights), sum(weights)//days)
+        right = sum(weights)
+
+        while True:
+            middle = (left + right) // 2
+            #print(left, middle, right, self.is_shipping_possible(weights, middle, days), self.is_shipping_possible(weights, middle-1, days))
+            # Check if we found the sweet spot
+            # Possible with this capacity, but not a smaller capacity
+            if self.is_shipping_possible(weights, middle, days) and \
+                not (middle == 1 or self.is_shipping_possible(weights, middle - 1, days)):
+                break
+
+            # If if was possible - this is new right (larger) bound
+            if self.is_shipping_possible(weights, middle, days):
+                right = middle
+            # Else - left (smaller) bound
+            else:
+                left = middle
+
+        return middle
 
     def shipWithinDaysBrute(self, weights, days):
         ''' Same, but by 1 increments
         '''
+        self.cache = {}
+
         capacity = max(max(weights), sum(weights)//days)
 
         while True:
@@ -41,21 +75,79 @@ class Solution:
                 return capacity
             capacity += 1
 
+def random_test(runs=10, maxlen=10):
+    solution = Solution()
+    for _ in range(runs):
+        weights = [random.randint(1, 500) for i in range(maxlen)]
+        days = random.randint(1, maxlen)
+        result1 = solution.shipWithinDaysBrute(weights, days)
+        result2 = solution.shipWithinDays(weights, days)
+        if result1 != result2:
+            print("Error")
+            print(weights, days, result1, result2)
+            break
+    else:
+        print(f"{runs} cases tested okay") 
+
+def test_one_case():
+    ''' Test shipWithinDays
+    '''
+    solution = Solution()
+
+    weights = [429, 141, 226, 249, 313, 216, 474, 173, 426, 128]
+    days = 8
+    result1 = solution.shipWithinDaysBrute(weights, days)
+    result2 = solution.shipWithinDays(weights, days)
+    print(weights, days, result1, result2, result1 == result2)
 
 
-def main():
+def test_manual():
     ''' Test shipWithinDays
     '''
     solution = Solution()
 
     test_cases = [
-        ([1,2,3,4,5,6,7,8,9,10], 5), #15
-        ([3,2,2,4,1,4], 3), #6
-        ([1,2,3,1,1], 4), #3
+        ([1,2,3,4,5,6,7,8,9,10], 5), # 15
+        ([3,2,2,4,1,4], 3), # 6
+        ([1,2,3,1,1], 4), # 3
+        ([1,2,3,4,1], 1), # 11
+        ([1,2,3,4,1], 11), # 
+        ([10], 1), # 10 
+        ([10], 10), # 10
     ]
     for weights, days in test_cases:
-        result = solution.shipWithinDaysBrute(weights, days)
-        print(weights, days, result)
+        result1 = solution.shipWithinDaysBrute(weights, days)
+        result2 = solution.shipWithinDays(weights, days)
+        print(weights, days, result1, result2, result1 == result2)
+        if result1 != result2:
+            print("Error")
+            print(weights, days)
+            break
+
+def timing_run(max_power, func):
+    ''' See how well it performs against brute
+    '''
+    for power in range(0, max_power + 1):
+        size = 2 ** power
+
+        weights = [random.randint(1, 500) for i in range(size)]
+        days = random.randint(1, size)
+
+        start = time.time()
+        result = func(weights, days)
+        elapsed = time.time() - start
+        print(f"Power: {power}, Size: {size}, Time: {elapsed}")
+
+def timing_test():
+    solution = Solution()
+    timing_run(18, solution.shipWithinDaysBrute)
+    print()
+    timing_run(20, solution.shipWithinDays)
 
 if __name__ == "__main__":
-    main()
+    import random
+    import time
+    #test_one_case()
+    #test_manual()
+    #random_test(1000)
+    timing_test()
