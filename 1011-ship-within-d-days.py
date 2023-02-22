@@ -5,6 +5,7 @@ class Solution:
 
     def __init__(self):
         self.cache = {}
+        self.weights_sorted = None
 
     def is_shipping_possible(self, weights, capacity, days):
         ''' Is it possible to do the shipping with this
@@ -36,18 +37,46 @@ class Solution:
         self.cache[capacity] = False
         return False
 
+    def is_shipping_possible(self, weights, capacity, allowed_days):
+        ''' Is it possible to do the shipping with this
+        capacity, in that many days
+        '''
+        if capacity in self.cache:
+            return self.cache[capacity]
+        this_day = 0
+        used_days = 1
+
+        for weight in weights:
+
+            if this_day + weight > capacity:
+                used_days += 1
+                this_day = weight
+            if this_day + weight == capacity:
+                used_days += 1
+                this_day = 0
+            else:
+                this_day += weight
+            if used_days > allowed_days:
+                self.cache[capacity] = False
+                return False
+        self.cache[capacity] = True
+        return True
+
+
     def shipWithinDays(self, weights, days):
         ''' Now let's do it with binary search
         '''
         # Flush the cache
         self.cache = {}
-
+        self.weights_sorted = weights.copy()
+        self.weights_sorted.sort(reverse=True)
+        
         left = max(max(weights), sum(weights)//days)
         right = sum(weights)
 
         while True:
             middle = (left + right) // 2
-            #print(left, middle, right, self.is_shipping_possible(weights, middle, days), self.is_shipping_possible(weights, middle-1, days))
+            # print(left, middle, right, self.is_shipping_possible(weights, middle, days), self.is_shipping_possible(weights, middle-1, days))
             # Check if we found the sweet spot
             # Possible with this capacity, but not a smaller capacity
             if self.is_shipping_possible(weights, middle, days) and \
@@ -94,8 +123,8 @@ def test_one_case():
     '''
     solution = Solution()
 
-    weights = [429, 141, 226, 249, 313, 216, 474, 173, 426, 128]
-    days = 8
+    weights = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    days = 5
     result1 = solution.shipWithinDaysBrute(weights, days)
     result2 = solution.shipWithinDays(weights, days)
     print(weights, days, result1, result2, result1 == result2)
@@ -131,23 +160,23 @@ def timing_run(max_power, func):
         size = 2 ** power
 
         weights = [random.randint(1, 500) for i in range(size)]
-        days = random.randint(1, size)
-
         start = time.time()
-        result = func(weights, days)
+        for _ in range(100):
+            days = random.randint(1, size)
+            func(weights, days)
         elapsed = time.time() - start
         print(f"Power: {power}, Size: {size}, Time: {elapsed}")
 
 def timing_test():
     solution = Solution()
-    timing_run(18, solution.shipWithinDaysBrute)
+    #timing_run(12, solution.shipWithinDaysBrute)
     print()
-    timing_run(20, solution.shipWithinDays)
+    timing_run(12, solution.shipWithinDays)
 
 if __name__ == "__main__":
     import random
     import time
-    #test_one_case()
+    test_one_case()
     #test_manual()
     #random_test(1000)
-    timing_test()
+    #timing_test()
