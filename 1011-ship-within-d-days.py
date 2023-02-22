@@ -5,9 +5,65 @@ class Solution:
 
     def __init__(self):
         self.cache = {}
-        self.weights_sorted = None
 
-    def is_shipping_possible(self, weights, capacity, days):
+    def is_shipping_possible(self, weights, capacity, allowed_days):
+        ''' Is it possible to do the shipping with this
+        capacity, in that many days
+        '''
+        if capacity in self.cache:
+            return self.cache[capacity]
+
+        this_day = 0
+        used_days = 1
+
+        for weight in weights:
+
+            if this_day + weight > capacity:
+                used_days += 1
+                this_day = weight
+            elif this_day + weight == capacity:
+                used_days += 1
+                this_day = 0
+                weight += 1
+            else:
+                this_day += weight
+
+            if used_days > allowed_days and this_day > 0 or used_days > allowed_days + 1:
+                self.cache[capacity] = False
+                return False
+
+        self.cache[capacity] = True
+        return True
+
+    def shipWithinDays(self, weights, days):
+        ''' Now let's do it with binary search
+        '''
+        # Flush the cache
+        self.cache = {}
+
+        left = max(max(weights), sum(weights)//days)
+        right = sum(weights)
+
+        while True:
+            middle = (left + right) // 2
+            #print(left, middle, right, self.is_shipping_possible(weights, middle, days), self.is_shipping_possible(weights, middle-1, days))
+            # Check if we found the sweet spot
+            # Possible with this capacity, but not a smaller capacity
+            if self.is_shipping_possible(weights, middle, days) and \
+                not (middle == 1 or self.is_shipping_possible(weights, middle - 1, days)) or \
+                middle == left and self.is_shipping_possible(weights, middle, days):
+                break
+
+            # If if was possible - this is new right (larger) bound
+            if self.is_shipping_possible(weights, middle, days):
+                right = middle
+            # Else - left (smaller) bound
+            else:
+                left = middle
+
+        return middle
+
+    def is_shipping_possible_v1(self, weights, capacity, days):
         ''' Is it possible to do the shipping with this
         capacity, in that many days
         '''
@@ -36,61 +92,6 @@ class Solution:
 
         self.cache[capacity] = False
         return False
-
-    def is_shipping_possible(self, weights, capacity, allowed_days):
-        ''' Is it possible to do the shipping with this
-        capacity, in that many days
-        '''
-        if capacity in self.cache:
-            return self.cache[capacity]
-        this_day = 0
-        used_days = 1
-
-        for weight in weights:
-
-            if this_day + weight > capacity:
-                used_days += 1
-                this_day = weight
-            if this_day + weight == capacity:
-                used_days += 1
-                this_day = 0
-            else:
-                this_day += weight
-            if used_days > allowed_days:
-                self.cache[capacity] = False
-                return False
-        self.cache[capacity] = True
-        return True
-
-
-    def shipWithinDays(self, weights, days):
-        ''' Now let's do it with binary search
-        '''
-        # Flush the cache
-        self.cache = {}
-        self.weights_sorted = weights.copy()
-        self.weights_sorted.sort(reverse=True)
-        
-        left = max(max(weights), sum(weights)//days)
-        right = sum(weights)
-
-        while True:
-            middle = (left + right) // 2
-            # print(left, middle, right, self.is_shipping_possible(weights, middle, days), self.is_shipping_possible(weights, middle-1, days))
-            # Check if we found the sweet spot
-            # Possible with this capacity, but not a smaller capacity
-            if self.is_shipping_possible(weights, middle, days) and \
-                not (middle == 1 or self.is_shipping_possible(weights, middle - 1, days)):
-                break
-
-            # If if was possible - this is new right (larger) bound
-            if self.is_shipping_possible(weights, middle, days):
-                right = middle
-            # Else - left (smaller) bound
-            else:
-                left = middle
-
-        return middle
 
     def shipWithinDaysBrute(self, weights, days):
         ''' Same, but by 1 increments
@@ -123,8 +124,8 @@ def test_one_case():
     '''
     solution = Solution()
 
-    weights = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    days = 5
+    weights = [46, 153, 189, 191, 170, 66, 193, 174, 105, 33]
+    days = 9
     result1 = solution.shipWithinDaysBrute(weights, days)
     result2 = solution.shipWithinDays(weights, days)
     print(weights, days, result1, result2, result1 == result2)
@@ -176,7 +177,7 @@ def timing_test():
 if __name__ == "__main__":
     import random
     import time
-    test_one_case()
+    #test_one_case()
     #test_manual()
     #random_test(1000)
-    #timing_test()
+    timing_test()
