@@ -2,7 +2,56 @@
 '''
 
 class Solution:
+
     def maxArea(self, height):
+        ''' Return the max volume of water
+        '''
+
+        # Stack of walls, each one higher that the previous one,
+        # with their positions: [(height, position), ...]
+        left_walls = []
+        # Go through the walls
+        for position, wall in enumerate(height):
+
+            # Populate the stack (only add the wall
+            # that is higher than the last in stack)
+            if (not left_walls or wall > left_walls[-1][0]) and wall > 0:
+                left_walls.append((wall, position))
+
+        #print(left_walls)
+
+        # Same for teh right walls
+        right_walls = []
+        for position, wall in enumerate(height[::-1]):
+            if (not right_walls or wall > right_walls[-1][0]) and wall > 0:
+                right_walls.append((wall, len(height) - position - 1))
+        #print(right_walls)
+
+        max_water = 0
+
+        for left_wall, left_position in left_walls:
+            
+            # Minimal distance (for pruning)
+            min_distance = max_water / left_wall
+
+            for right_wall, right_position in right_walls:
+                
+                # This wall is too close to surpass teh max_water
+                if right_position - left_position < min_distance:
+                    break
+
+                water = min(left_wall, right_wall) * \
+                    (right_position - left_position)
+
+                # Recalculate min_distance each time we have new record
+                if water > max_water:
+                    max_water = water
+                    min_distance = max_water / left_wall
+
+        return max_water
+
+
+    def maxAreaFailed(self, height):
         ''' Return the max volume of water
         '''
 
@@ -125,11 +174,13 @@ def main():
     test_cases = [
         [1, 3, 2, 5, 3, 8, 3, 4], # 18
         [1, 8, 6, 2, 5, 4, 8, 3, 7], # 49
+        [0, 0], # 0
+        [0, 1], # 0
         [1, 1], # 1
         [3, 10, 6, 15, 16, 15, 13, 2], #?
         [17, 26, 18, 39, 19, 22, 38, 34, 39, 37, 47, 35, 38, 19, 20, 17, 1, 6, 36, 48, 7, 9, 39, 7, 14], 
         [9, 16, 23, 1, 10, 18, 17, 2, 16, 4, 25, 1, 26],
-        [1, 8, 2, 8, 12, 20, 17, 2, 15, 13, 15]
+        [1, 8, 2, 8, 12, 20, 17, 2, 15, 13, 15],
     ]
 
     solution = Solution()
@@ -139,7 +190,7 @@ def main():
 def test_one_case():
     ''' test maxArea for one case
     '''
-    array = [24, 39, 37, 21, 41, 52, 27, 49, 26, 50, 49, 11, 5, 19, 1, 33, 11, 8, 24, 27, 39, 17, 47, 29, 50, 46, 23]
+    array = [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0]
     solution = Solution()
     print(array, solution.maxArea(array), solution.maxAreaBrute(array))
 
@@ -150,7 +201,7 @@ def test_random_case():
     random_cases = [random_case(i) for i in range(2, 101)]
     solution = Solution()
     for array in random_cases:
-        print(array)
+        #print(array)
         if solution.maxArea(array) != solution.maxAreaBrute(array):
             print("Error")
             print("Test case: ", array)
@@ -165,6 +216,7 @@ def test_large_case():
     for power in range(2, 15):
         size = 2**power
         large_case = [i for i in range(size//2)] + [i for i in range(size//2, -1, -1)]
+        #print(large_case)
         start = time.time()
         result = solution.maxArea(large_case)
         # print(result)
@@ -174,7 +226,7 @@ def test_large_case():
 if __name__ == "__main__":
     import random
     import time
-    test_one_case()
+    #test_one_case()
     #main()
     #test_random_case()
-    #test_large_case()
+    test_large_case()
