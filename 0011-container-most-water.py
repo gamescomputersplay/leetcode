@@ -18,24 +18,24 @@ class Solution:
             if (not left_walls or wall > left_walls[-1][0]) and wall > 0:
                 left_walls.append((wall, position))
 
-        #print(left_walls)
-
         # Same for teh right walls
         right_walls = []
         for position, wall in enumerate(height[::-1]):
             if (not right_walls or wall > right_walls[-1][0]) and wall > 0:
                 right_walls.append((wall, len(height) - position - 1))
-        #print(right_walls)
+
 
         max_water = 0
 
         for left_wall, left_position in left_walls:
             
+            half_mark = len(right_walls) // 2
+
             # Minimal distance (for pruning)
             min_distance = max_water / left_wall
 
-            for right_wall, right_position in right_walls:
-                
+            for right_wall, right_position in right_walls[half_mark:]:
+
                 # This wall is too close to surpass teh max_water
                 if right_position - left_position < min_distance:
                     break
@@ -47,6 +47,22 @@ class Solution:
                 if water > max_water:
                     max_water = water
                     min_distance = max_water / left_wall
+
+            min_height = max_water / (len(height) - left_position)
+
+            for right_wall, right_position in right_walls[:half_mark + 1][::-1]:
+
+                # This wall is too close to surpass the max_water
+                if right_wall < min_height:
+                    break
+
+                water = min(left_wall, right_wall) * \
+                    (right_position - left_position)
+
+                # Recalculate min_distance each time we have new record
+                if water > max_water:
+                    max_water = water
+                    min_height = max_water / (len(height) - left_position)
 
         return max_water
 
@@ -190,7 +206,7 @@ def main():
 def test_one_case():
     ''' test maxArea for one case
     '''
-    array = [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0]
+    array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
     solution = Solution()
     print(array, solution.maxArea(array), solution.maxAreaBrute(array))
 
