@@ -30,11 +30,14 @@ def main():
 
     test_cases = [3, 58, 1994] + \
     [
-        i for i in range(1, 4000, 371)
+        i for i in range(1, 4000, 271)
     ]
     for num in test_cases:
         result = solution.intToRoman(num)
         print(num, result)
+
+        # For testing of 0013
+        #print(f"('{result}', {num}),")
 
 
 
