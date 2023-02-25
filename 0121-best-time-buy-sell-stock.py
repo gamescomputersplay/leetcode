@@ -10,6 +10,9 @@ class Solution:
 
         for price in prices:
 
+            if min_price_so_far < price < min_price_so_far + max_profit:
+                continue
+
             # Calculate max possible profit
             max_profit = max(max_profit, price - min_price_so_far)
 
@@ -49,5 +52,5 @@ def timing_test():
 if __name__ == "__main__":
     import time
     import random
-    #main()
-    timing_test()
+    main()
+    #timing_test()
