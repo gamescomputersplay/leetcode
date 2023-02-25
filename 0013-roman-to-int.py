@@ -2,7 +2,27 @@
 '''
 class Solution:
     def romanToInt(self, s):
-        return 0
+
+        # Simple mapping
+        romans_map = {
+            "M": 1000, "D": 500, "C": 100, "L": 50, "X": 10, "V": 5, "I": 1
+            }
+
+        result = 0
+        previous = 0
+
+        for letter in s:
+
+            current_value = romans_map[letter]
+
+            # This one catches IV,IX adn so on
+            if current_value > previous:
+                result -= previous * 2
+
+            result += current_value
+            previous = current_value
+
+        return result
 
 def main():
     ''' Test intToRoman
@@ -32,7 +52,6 @@ def main():
     for roman, arabic in test_cases:
         result = solution.romanToInt(roman)
         print(roman, result, result == arabic)
-
 
 
 if __name__ == "__main__":
