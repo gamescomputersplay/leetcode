@@ -17,22 +17,28 @@ class Solution:
 
                 if - num_1 - num_2 not in lack:
                     lack[- num_1 - num_2] = []
-                lack[- num_1 - num_2].append(((position_1, position_2), (num_1, num_2)))
+                lack[- num_1 - num_2].append([position_1, position_2])
 
         for position, num in enumerate(nums):
 
             # If number is in "lack" - we have an answer
             if num in lack:
                 for lack_option in lack[num]:
-                    if position not in lack_option[0]:
+                    if position not in lack_option:
 
-                        one_answer = list(lack_option[1])
-                        one_answer.append(num)
-                        one_answer.sort()
-                        answers.add(tuple(one_answer))
+                        answer = lack_option.copy()
+                        answer.append(position)
+                        answer.sort()
+                        answers.add(tuple(answer))
 
         # Transform into the right format
-        return [list(answer) for answer in answers]
+        answers_values = set()
+        for answer in answers:
+            answer_values = [nums[pos] for pos in answer]
+            answer_values.sort()
+            answers_values.add(tuple(answer_values))
+
+        return [list(answer) for answer in answers_values]
 
 def main():
     ''' Test threeSum
