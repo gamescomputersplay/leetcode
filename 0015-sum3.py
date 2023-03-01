@@ -4,6 +4,32 @@
 class Solution:
     def threeSum(self, nums):
 
+        # List of answer
+        answers = set()
+
+        # Dict to quickly look up position (and existence) by number
+        lookup = {num: position for position, num in enumerate(nums)}
+
+        # Go through all pairs
+        for position_1, num_1 in enumerate(nums):
+            for position_2, num_2 in enumerate(nums[:position_1]):        
+
+                # And lookup if the difference is in the array, using dict
+                if - num_1 - num_2 in lookup and \
+                   lookup[- num_1 - num_2] != position_1 and \
+                   lookup[- num_1 - num_2] != position_2:
+
+                    # This is to deduplicate  answers
+                    answer = [num_1, num_2, - num_1 - num_2]
+                    answer.sort()
+                    answers.add(tuple(answer))
+
+        return [list(answer) for answer in answers]
+
+    def threeSumSlow(self, nums):
+        ''' First version, failed by time
+        '''
+        
         # Dict of all option of lacking to 0 for all pairs of numbers:
         # {[how much lack to 0: ((positions), (values)) ... ]}
         lack = {}
