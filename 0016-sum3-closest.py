@@ -38,11 +38,11 @@ class Solution:
 
             # With first time combined list sorted one way
             if direction == 0:
-                combined.sort(key=lambda x: x[0])
+                combined.sort()
             # And the second time - the other way
             else:
-                combined.sort(key=lambda x: -x[0])
-
+                combined.sort(reverse=True)
+            #print(combined)
             # Go through each element in the combined array
             for position, element in enumerate(combined):
 
@@ -135,5 +135,5 @@ if __name__ == "__main__":
     import random
     import time
     main()
-    #test_random(100)
+    test_random(100)
     #test_timing()
