@@ -27,30 +27,37 @@ class Solution:
         # Combine and sort two lists
         combined = pair_sums + single_values
 
-        # Sort by the first value in a tuple (that is target-pair and values)
-        combined.sort(key=lambda x: x[0])
-        #print(combined)
-
         # Next we use the fact that the closer equation val3 ~ target-val1 - val2,
         # the closer target ~ val1 + val2 + val3 is too
 
         minimal_distance = float("inf")
         sum_when_minimal_difference = None
 
-        for position, element in enumerate(combined):
+        # Next step need to do twice
+        for direction in range(2):
 
-            # Do the comparison only for Single elements
-            if element[2] is not None:
-                continue
-            
-            # Find a pair to the right, made with different numbers
-            right = position + 1
-            while right < len(combined) and combined[right][2] is None and \
-                  position not in combined[right][1:]:
-                  right += 1
+            # With first time combined list sorted one way
+            if direction == 0:
+                combined.sort(key=lambda x: x[0])
+            # And the second time - the other way
+            else:
+                combined.sort(key=lambda x: -x[0])
 
-            if right < len(combined):
-                compare(element, combined[right])
+            # Go through each element in the combined array
+            for position, element in enumerate(combined):
+
+                # Do the comparison only for Single elements
+                if element[2] is not None:
+                    continue
+
+                # Find a pair to the right, made with different numbers
+                right = position + 1
+                while right < len(combined) and combined[right][2] is None and \
+                    element[1] not in combined[right][1:]:
+                    right += 1
+
+                if right < len(combined):
+                    compare(element, combined[right])
 
 
         return sum_when_minimal_difference
@@ -81,8 +88,9 @@ def main():
     solution = Solution()
 
     test_cases = [
-        ([1, 1, 1, 1, 1, 1, 2], 20),
-        ([891, 396, -546, 484, -525, 301, -867, 64, -341, -904], 3509),
+        ([-860, -500, 922, 986, 860, -941, -254, 475, 125, 737], -273),
+        #([1, 1, 1, 1, 1, 1, 2], 20),
+        #([891, 396, -546, 484, -525, 301, -867, 64, -341, -904], 3509),
         #([-1, 2, 1, -4], 1), #2
         #([0, 0, 0], 1), #0
     ]
@@ -127,5 +135,5 @@ if __name__ == "__main__":
     import random
     import time
     main()
-    #test_random(10)
+    #test_random(100)
     #test_timing()
