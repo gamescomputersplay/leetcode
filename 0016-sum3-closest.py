@@ -37,11 +37,13 @@ class Solution:
         for direction in range(2):
 
             # With first time combined list sorted one way
+            # (by the pair targetsum / single value)
             if direction == 0:
-                combined.sort()
-            # And the second time - the other way
+                combined.sort(key=lambda x: x[0])
+            # And the second time - we need to go exactly the other way
+            # Note that we need to flip it, not re-sort it
             else:
-                combined.sort(reverse=True)
+                combined = combined[::-1]
             #print(combined)
             # Go through each element in the combined array
             for position, element in enumerate(combined):
@@ -58,7 +60,6 @@ class Solution:
 
                 if right < len(combined):
                     compare(element, combined[right])
-
 
         return sum_when_minimal_difference
 
@@ -89,10 +90,10 @@ def main():
 
     test_cases = [
         ([-860, -500, 922, 986, 860, -941, -254, 475, 125, 737], -273),
-        #([1, 1, 1, 1, 1, 1, 2], 20),
-        #([891, 396, -546, 484, -525, 301, -867, 64, -341, -904], 3509),
-        #([-1, 2, 1, -4], 1), #2
-        #([0, 0, 0], 1), #0
+        ([1, 1, 1, 1, 1, 1, 2], 20),
+        ([891, 396, -546, 484, -525, 301, -867, 64, -341, -904], 3509),
+        ([-1, 2, 1, -4], 1), #2
+        ([0, 0, 0], 1), #0
     ]
     for nums, target in test_cases:
         result = solution.threeSumClosest(nums, target)
@@ -105,8 +106,10 @@ def test_random(cases):
         nums = [random.randint(-1000, 1000) for _ in range(10)]
         target = random.randint(-10000, 10000)
         result = solution.threeSumClosest(nums, target)
+        # In the actual test there is only one solution, but
+        # with random test multiple solutions are possible
         result2 = solution.threeSumClosestBrute(nums, target)
-        if result != result2:
+        if abs(target - result) != abs(target - result2):
             print(f"Error in case: {nums}, {target}")
             print(f"Answers were {result} and {result2}")
             return
@@ -134,6 +137,6 @@ def test_timing(max_power = 12):
 if __name__ == "__main__":
     import random
     import time
-    main()
-    test_random(100)
+    #main()
+    test_random(1000)
     #test_timing()
