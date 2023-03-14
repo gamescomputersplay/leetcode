@@ -1,61 +1,7 @@
 ''' https://leetcode.com/problems/add-two-numbers/
 '''
 
-
-class ListNode:
-    ''' Definition for singly-linked list
-    '''
-
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
-
-    def __str__(self):
-        ''' Looks  something like:
-        1 -> 2 -> 3 -> 4 ->
-        '''
-
-        string = ""
-        current = self
-
-        while current is not None:
-
-            string += f"{current.val} -> "
-            current = current.next
-
-        return string
-
-
-def linked_list(array):
-    ''' Put together a linked list from a regular list,
-    return the first link.
-    '''
-
-    # LInked list can't be empty
-    if not array:
-        return None
-
-    # This is teh link we'll return in the end
-    first = ListNode(array[0])
-
-    # Previous is the one ready to be extended
-    previous = first
-
-    # First element is taken care of, start from the second one
-    for value in array[1:]:
-
-        # New links are created
-        current = ListNode(value)
-        # Attached to the last link of the existing linked list
-        previous.next = current
-        # And now they are the link ready to be extended
-        previous = current
-
-    # But it is the first one we need to return
-    return first
-
-
-
+from classes import linkedlist
 
 class Solution(object):
 
@@ -92,7 +38,7 @@ class Solution(object):
             current_value, carry = current_sum % 10, current_sum // 10
 
             # Create a new link with that value
-            current = ListNode(current_value)
+            current = linkedlist.ListNode(current_value)
 
             # Remember the first link - we'll need to return it
             if first is None:
@@ -107,7 +53,7 @@ class Solution(object):
         #  If after going through all digit there is still carry
         # Add last digit "1"
         if carry == 1:
-            previous.next = ListNode(1)
+            previous.next = linkedlist.ListNode(1)
 
         return first
 
@@ -116,9 +62,9 @@ def main():
     '''
 
     test_cases = [
-        (linked_list([2, 4, 3]), linked_list([5, 6, 4])),
-        (linked_list([0]), linked_list([0])),
-        (linked_list([9, 9, 9, 9, 9, 9, 9]), linked_list([9, 9, 9, 9])),
+        (linkedlist.create_linked_list([2, 4, 3]), linkedlist.create_linked_list([5, 6, 4])), # 708
+        (linkedlist.create_linked_list([0]), linkedlist.create_linked_list([0])), # 0
+        (linkedlist.create_linked_list([9, 9, 9, 9, 9, 9, 9]), linkedlist.create_linked_list([9, 9, 9, 9])), # 10009998
     ]
 
     solution = Solution()
