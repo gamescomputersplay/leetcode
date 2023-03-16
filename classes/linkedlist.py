@@ -19,8 +19,13 @@ class ListNode:
 
         while current is not None:
 
-            string += f"{current.val} -> "
+            if isinstance(current.val, int):
+                string += f"{current.val} -> "
+            else:
+                string += f"'{current.val}' -> "
             current = current.next
+
+        string += "x"
 
         return string
 
