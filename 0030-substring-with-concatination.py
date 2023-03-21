@@ -3,7 +3,58 @@
 
 class Solution:
     def findSubstring(self, s, words):
-        return []
+
+        result = []
+
+        # This is the word size we are looking for
+        word_size = len(words[0])
+
+        # Check word. Something we will use to check if
+        # matches match all words, accounting for duplicates
+        words.sort()
+        check_word = "".join(words)
+
+        # Transform words into set for faster search
+        words_set = set(words)
+
+        # This list will contain at which position any substrings were found
+        substring_found_at = set()
+
+        # Move the window through the string
+        for pos in range(len(s) - word_size + 1):
+
+            if s[pos:pos+word_size] in words_set:
+                substring_found_at.add(pos)
+
+        # Now find the subset that might be a match
+        # (has right number matches at the right intervals)
+        for first_match_at in substring_found_at:
+
+            # Generate required match sequence
+            for shift_count in range(1, len(words)):
+                next_match = first_match_at + shift_count * word_size
+
+                # If we didn't have a match where it should be
+                # This is not a substring we are looking for
+                if next_match not in substring_found_at:
+                    break
+            else:
+                
+                # At this point we know there is a place that matches
+                # the right number fo words in a row, but we don't know
+                # if those are the right words
+                
+                # We will break down the string, construct a check word
+                # and see if it matches original check word
+                new_words = [s[first_match_at + shift * word_size:first_match_at + (shift + 1) * word_size]
+                               for shift in range(len(words))]
+                new_words.sort()
+                new_check_word = "".join(new_words)
+
+                if new_check_word == check_word:
+                    result.append(first_match_at)
+
+        return result
     
 def main():
     ''' Test findSubstring
@@ -14,6 +65,9 @@ def main():
         ("barfoothefoobarman", ["foo","bar"]), # [0, 9]
         ("wordgoodgoodgoodbestword", ["word","good","best","word"]), # []
         ("barfoofoobarthefoobarman", ["bar","foo","the"]), # [6, 9, 12]
+        ("a", ["a"]), # [0]
+        ("aba", ["a"]), # [0, 2]
+        ("a", ["a", "b"]), # []
     ]
     for string, words in test_cases:
         result = solution.findSubstring(string, words)
