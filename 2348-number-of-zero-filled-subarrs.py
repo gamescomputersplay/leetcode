@@ -5,13 +5,6 @@ class Solution:
 
     def zeroFilledSubarray(self, nums):
 
-        def count_subarrays(zeros):
-            ''' How many sub arrays are there in "zeros" zeros
-            '''
-            if zeros % 2 == 0:
-                return (zeros + 1) * (zeros // 2)
-            return (zeros + 1) * (zeros // 2) + (zeros // 2 + 1)
-
         # To keep track of continuous zeros
         previous = None
         # To keep track of the zeros' stretch's length
@@ -27,14 +20,13 @@ class Solution:
                     zero_count = 1
                 else:
                     zero_count += 1
-            else:
-                if zero_count != 0:
-                    subarrays_count += count_subarrays(zero_count)
-                zero_count = 0
-            previous = num
 
-        if zero_count != 0:
-            subarrays_count += count_subarrays(zero_count)
+                # For each new zero in a stretch, just add the current length to the total count
+                subarrays_count += zero_count
+            else:
+                zero_count = 0
+                
+            previous = num
 
         return subarrays_count
 
