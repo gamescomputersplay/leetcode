@@ -3,11 +3,62 @@
 
 
 class Solution():
+
     def longestPalindrome(self, s):
-        """
-        :type s: str
-        :rtype: str
-        """
+        # This is more of an "indented" solution, I guess -- it showed much
+        # better results on the test cases. However, and this is where
+        # I probably outsmarted myself, it performs kinda bad on strings
+        # like "a"*1000, while my weird solutions with tokens shows more
+        # decent results in that case.
+
+        longest_pali = "" 
+
+        # Go through all the potential centers of the pali
+        for i in range(len(s)):
+            
+            # Initialization is a bit different for even and odd pali
+            # But the rest is teh same, so we can combine it
+            for mode in ("odd", "even"):
+
+                # Odd pali starts from one character
+                if mode == "odd":
+                    left, right = i, i
+                # Even - from adjacent characters
+                elif mode == "even" and i > 0:
+                    left, right = i - 1, i
+                # No even palis in position 0
+                else:
+                    break
+
+                while True:
+
+                    # Exit if it is no longer a pali
+                    if s[left] != s[right]:
+                        break
+
+                    # Update longest found pali
+                    current_len = right - left + 1
+                    current_pali = s[left: right + 1]
+                    if current_len > len(longest_pali):
+                        longest_pali = current_pali
+
+                    # Try to expand
+                    # Exit if the edge is found
+                    if left - 1 < 0 or right + 1 > len(s) - 1:
+                        break
+
+                    left -= 1
+                    right += 1
+
+        return longest_pali
+
+
+    def longestPalindrome_token(self, s):
+        # This is the version I come up myself with. It is sort of O(n^3),
+        # which is bad, but optimized with search tokens, so it was still
+        # accepted, albeit with rather abysmal timing results.
+        # It is actually not too bad if you consider
+        # test cases like "a" * 1000 or "ab" * 500
 
         longest_pali = ""
 
