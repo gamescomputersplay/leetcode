@@ -175,24 +175,29 @@ def main():
         "bb",
         "babad", # "bab" or "aba"
         "cbbd", # bb
-        "a" * 1000,
-        "ab" * 500,
-        "abcd" * 250 + "d",
         "abcdefghijklmnopabbarstuvdcbawxyz",
         "abcdefghijklmnopqdcbarstuvwxyz",
         "glwhcebdjbdroiurzfxxrbhzibilmcfasshhtyngwrsnbdpzgjphujzuawbebyhvxfhtoozcitaqibvvowyluvdbvoqikgojxcefzpdgahujuxpiclrrmalncdrotsgkpnfyujgvmhydrzdpiudkfchtklsaprptkzhwxsgafsvkahkbsighlyhjvbburdfjdfvjbaiivqxdqwivsjzztzkzygcsyxlvvwlckbsmvwjvrhvqfewjxgefeowfhrcturolvfgxilqdqvitbcebuooclugypurlsbdfquzsqngbscqwlrdpxeahricvtfqpnrfwbyjvahrtosovsbzhxtutyfjwjbpkfujeoueykmbcjtluuxvmffwgqjgrtsxtdimsescgahnudmsmyfijtfrcbkibbypenxnpiozzrnljazjgrftitldcueswqitrcvjzvlhionutppppzxoepvtzhkzjetpfqsuirdcyqfjsqhdewswldawhdyijhpqtrwgyfmmyhhkrafisicstqxokdmynnnqxaekzcgygsuzfiguujyxowqdfylesbzhnpznayzlinerzdqjrylyfzndgqokovabhzuskwozuxcsmyclvfwkbimhkdmjacesnvorrrvdwcgfewchbsyzrkktsjxgyybgwbvktvxyurufsrdufcunnfswqddukqrxyrueienhccpeuqbkbumlpxnudmwqdkzvsqsozkifpznwapxaxdclxjxuciyulsbxvwdoiolgxkhlrytiwrpvtjdwsssahupoyyjveedgqsthefdyxvjweaimadykubntfqcpbjyqbtnunuxzyytxfedrycsdhkfymaykeubowvkszzwmbbjezrphqildkmllskfawmcohdqalgccffxursvbyikjoglnillapcbcjuhaxukfhalcslemluvornmijbeawxzokgnlzugxkshrpojrwaasgfmjvkghpdyxt",
         "aabbbbbaaaaa",
         "aaaaaaaaaaaaaabaaaaaaaaaaaaa",
+        "ab" * 500,
+        "abcd" * 250 + "d",
+        "a" * 1000,
+        "a" * 2000,
+        "a" * 4000,
+        "a" * 8000,
     ]
 
-    for string  in test_cases:
-        start = time.time()
-        result = solution.longestPalindrome(string)
-        timing = time.time() - start
-        print()
-        print(string[:10], "..." if len(string) > 10 else "")
-        print(result)
-        print(f"Done in {timing}")
+    for func in (solution.longestPalindrome, solution.longestPalindrome_token):
+        print(f"Using function: {func.__name__}\n")
+        for string  in test_cases:
+            start = time.time()
+            result = func(string)
+            timing = time.time() - start
+            print()
+            print(f"IN: {string[:10]}... ({len(string)})" if len(string) > 10 else string)
+            print(f"OUT: {result[:10]}... ({len(result)})" if len(result) > 10 else result)
+            print(f"Done in {timing}")
 
 if __name__ == "__main__":
     import time
