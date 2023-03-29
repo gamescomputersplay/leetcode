@@ -7,18 +7,16 @@ class Solution:
         if not nums:
             return [-1, -1]
 
-        target_start = 0
-
         # 1. Find the start of target edge
+        target_start = 0
 
         left = 0
         right = len(nums)
 
         while True:
-        #for _ in range(10):
 
             center = (left + right) // 2
-            #print(left, center, right)
+            # print(left, center, right)
 
             # Found the beginning in the beginning of the list
             if nums[center] == target and center == 0:
@@ -40,13 +38,41 @@ class Solution:
                 target_start = -1
                 break
 
-
             if nums[center] >= target:
                 right = center
             else:
                 left = center
 
-        return [target_start, -1]
+        if target_start == -1:
+            return [-1, -1]
+        
+        # 2. Find the ending
+        target_end = 0
+
+        left = target_start
+        right = len(nums)
+
+        while True:
+
+            center = (left + right) // 2
+            # print(left, center, right)
+            
+            # Found the end in the end of the list
+            if nums[center] == target and center == len(nums) - 1:
+                target_end = center
+                break
+
+            # Found the beginning elsewhere
+            if nums[center] == target and center <= len(nums) - 2 and nums[center + 1] > target:
+                target_end = center
+                break
+
+            if nums[center] > target:
+                right = center
+            else:
+                left = center
+
+        return [target_start, target_end]
 
 def main():
     ''' Test divide
@@ -55,6 +81,7 @@ def main():
 
     test_cases = [
         ([1, 2, 2, 3, 5,7,7,8,8,10], 8),
+        ([1, 2, 2], 1),
         ([1,1,1,1,2], 1),
         ([1,1,1,1,2, 2, 2, 2], 2),
         ([1,1,1,1,2], 2),
