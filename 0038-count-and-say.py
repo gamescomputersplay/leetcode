@@ -9,22 +9,24 @@ class Solution:
 
         s = self.countAndSay(n - 1)
 
-        result = ""
+        result = []
         prev = None
         count = 0
 
         for char in s:
 
             if prev is not None and char != prev:
-                result += str(count) + prev
+                result.append(str(count))
+                result.append(prev)
                 count = 0
 
             prev = char
             count += 1
 
-        result += str(count) + s[-1]
+        result.append(str(count))
+        result.append(s[-1])
 
-        return result
+        return "".join(result)
 
 def main():
     ''' Test countAndSay
