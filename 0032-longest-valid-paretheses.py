@@ -2,7 +2,49 @@
 '''
 
 class Solution:
+
     def longestValidParentheses(self, s):
+
+        # Stack to keep track of parentheses in format:
+        # [(position: legit length so far), ]
+        stack = []
+
+        # How much of legit string we accumulated
+        # (in case new "(" starts)
+        legit_len_so_far = 0
+
+        # Track max legit string length
+        max_legit = 0
+
+        # Go through the string
+        for position, char in enumerate(s):
+
+            if char == "(":
+                # Add an item, to the stack
+                # It means: This is the position of the opening parentheses
+                # + this much legit string there was before it
+                stack.append((position, legit_len_so_far))
+                legit_len_so_far = 0
+
+            elif char == ")" and stack:
+                # When a legitimate closing parentheses is found
+                legit_start, legit_len_so_far = stack.pop()
+                # Legit string is the the part the current parentheses
+                # just closed + whatever legit string was before that
+                # It will be used for the next opening parentheses
+                legit_len_so_far += (position - legit_start + 1)
+                # Use it for the max legit string too
+                max_legit = max(max_legit, legit_len_so_far)
+
+            else:
+                # Illegitimate character. Reset the stack and legit counter
+                stack = []
+                legit_len_so_far = 0
+
+        return max_legit
+                
+
+    def longestValidParentheses_old(self, s):
 
         valid_parts = []
 
@@ -60,13 +102,19 @@ def main():
     test_cases = [
         "(()", # 2
         ")()())", # 4
+        "(()()",
         "", # 0
         "(())()()()())(()()()())()(((()))(()()((()()))))",
-        "(()())"
+        "(())()(",
+        ")()(((()))(()()((()()))))",
+        "(()())",
+        "()(()",
+        "))((()((()", # 6
     ]
     for string in test_cases:
-        result = solution.longestValidParentheses(string)
-        print(string, result)
+        result = solution.longestValidParentheses_old(string)
+        result2 = solution.longestValidParentheses(string)
+        print(string, result, result2)
 
 def time_test(powers):
     solution = Solution()
@@ -82,9 +130,21 @@ def time_test(powers):
 
         print(f"{length}: {elapsed}")
 
+def random_tests(runs):
+    solution = Solution()
+    for _ in range(runs):
+        string = "".join(["(" if random.random() < 0.5 else ")" for _ in range(random.randint(1, 10))])
+        result = solution.longestValidParentheses(string)
+        result2 = solution.longestValidParentheses_old(string)
+        if result != result2:
+            print(f"Error in {string}: {result}, {result2}")
+            break
+    else:
+        print(f"{runs} test okay")
 
 if __name__ == "__main__":
     import random
     import time
     main()
-    time_test(15)
+    time_test(20)
+    random_tests(100)
