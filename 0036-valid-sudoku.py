@@ -4,29 +4,28 @@
 class Solution:
     def isValidSudoku(self, board):
 
-        # Rows
-        houses = [[(i, j) for j in range(9)] for i in range(9)]
-        # Columns
-        houses += [[(j, i) for j in range(9)] for i in range(9)]
-        # Squares
-        houses += [[(j//3 + i//3 * 3, j%3 + i%3 * 3) for j in range(9)] for i in range(9)]
-
         # Go through the houses
-        for house in houses:
+        for i in range(9):
 
-            # And check uniqueness of the numbers
-            already = set()
-            for i, j in house:
-
-                if board[i][j] == ".":
-                    continue
-                if board[i][j] in already:
-                    return False
-                already.add(board[i][j])
+            # Row
+            house = [board[i][j] for j in range(9) if board[i][j] != "."]
+            if len(house) != len(set(house)):
+                return False
+            
+            # Column
+            house = [board[j][i] for j in range(9) if board[j][i] != "."]
+            if len(house) != len(set(house)):
+                return False
+            
+            # Square
+            x, y = i//3 * 3, i%3 * 3
+            house = [board[j//3 + x][j%3 + y] for j in range(9) if board[j//3 + x][j%3 + y] != "."]
+            if len(house) != len(set(house)):
+                return False
 
         return True
 
-def main():
+def main(verbose=True):
     ''' Test isValidSudoku
     '''
     solution = Solution()
@@ -54,8 +53,17 @@ def main():
     ]
     for sudoku in test_cases:
         result = solution.isValidSudoku(sudoku)
-        print(result)
+        if verbose:
+            print(result)
 
+def timing():
+    start = time.time()
+    for _ in range(10000):
+        main(verbose=False)
+    elapsed = time.time() - start
+    print(elapsed)
 
 if __name__ == "__main__":
+    import time
     main()
+    timing()
