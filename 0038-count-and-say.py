@@ -13,17 +13,16 @@ class Solution:
         prev = None
         count = 0
 
-        for position, char in enumerate(s):
+        for char in s:
 
             if prev is not None and char != prev:
                 result += str(count) + prev
                 count = 0
 
-            if position == len(s) - 1:
-                result += str(count+1) + char
-
             prev = char
             count += 1
+
+        result += str(count) + s[-1]
 
         return result
 
