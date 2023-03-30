@@ -6,7 +6,7 @@ class Solution:
     def __init__(self):
         self.cache = {}
 
-    def combinationSum(self, candidates, target):
+    def combinationSum_recursive(self, candidates, target):
 
         cache_index = tuple(candidates + [target])
 
@@ -16,29 +16,30 @@ class Solution:
         if target == 0:
             self.cache[cache_index] = [[]]
             return [[]]
-        
-        if target < 0:
-            self.cache[cache_index] = []
-            return []
 
         out = set()
         
         for candidate in candidates:
 
-            new_candidates = candidates.copy()
             new_target = target - candidate
 
-            results = self.combinationSum(new_candidates, new_target)
+            if new_target >= 0:
+                results = self.combinationSum_recursive(candidates, new_target)
 
-            for result in results:
-                sorted_result = [candidate] + result
-                sorted_result.sort()
-                out.add(tuple(sorted_result))
+                for result in results:
+                    sorted_result = [candidate] + list(result)
+                    sorted_result.sort()
+                    out.add(tuple(sorted_result))
 
-        out = [list(item) for item in out]
+        #out = [list(item) for item in out]
         self.cache[cache_index] = out
         return out
 
+    def combinationSum(self, candidates, target):
+
+        result = self.combinationSum_recursive(candidates, target)
+        out = [list(item) for item in result]
+        return out
 
 def main():
     ''' Test combinationSum
@@ -53,5 +54,18 @@ def main():
     for candidates, target in test_cases:
         print(candidates, target, solution.combinationSum(candidates, target))
 
+def large_case():
+    solution = Solution()
+
+    candidates = [n for n in range(2, 41)]
+    target = 59
+    start = time.time()
+    result = solution.combinationSum(candidates, target)
+    elapsed = time.time() - start
+    print(f"{len(result)} solution in {elapsed} s")
+
+
 if __name__ == "__main__":
+    import time
     main()
+    large_case()
