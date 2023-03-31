@@ -9,6 +9,46 @@ class Solution:
     def __init__(self):
         self.cache = {}
 
+    def combination_rec(self, candidates, target, start):
+
+        if (target, start) in self.cache:
+            return self.cache[(target, start)]
+
+        if target == 0:
+            self.cache[(target, start)] = [[]]
+            return [[]]
+
+        out = set()
+
+        for new_start in range(start, len(candidates)):
+
+            candidate = candidates[new_start]
+            new_target = target - candidate
+
+            if new_target >= 0:
+                results = self.combination_rec(candidates, new_target, new_start + 1)
+                for result in results:
+                    out.add(tuple([candidate] + list(result)))
+                    
+        self.cache[(target, start)] = out
+        return out
+
+    def combinationSum2(self, candidates, target):
+
+        # Sort the candidates
+        candidates.sort(reverse=False)
+
+        start = 0
+        out = self.combination_rec(candidates, target, start)
+        # Convert to lists
+        out = [list(item) for item in out]
+        return out
+
+    #### Below is the old solution
+
+    def __init__(self):
+        self.cache = {}
+
     def combinationSum_recursive(self, candidates, target):
 
         cache_index = tuple(candidates + [target])
@@ -42,7 +82,7 @@ class Solution:
         self.cache[cache_index] = out
         return out
 
-    def combinationSum2(self, candidates, target):
+    def combinationSum2_old(self, candidates, target):
 
         result = self.combinationSum_recursive(candidates, target)
         out = [list(item) for item in result]
@@ -56,6 +96,8 @@ def main():
     test_cases = [
         ([10,1,2,7,6,1,5], 8),
         ([2,5,2,1,2], 5),
+        ([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 20),
+        ([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 27)
     ]
     for candidates, target in test_cases:
         print(candidates, target, solution.combinationSum2(candidates, target))
