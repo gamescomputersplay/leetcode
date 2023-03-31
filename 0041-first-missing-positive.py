@@ -19,22 +19,12 @@ class Solution:
         # Next, rearrange items as [1, 2, 3, 4, ...] etc
         for i in range(len(nums)):
 
-            # Ignore non-positive numbers
-            if nums[i] <= 0:
-                continue
-
-            # Ignore numbers that are already in place
-            if nums[i] == i + 1:
-                continue
-
-            # Ignore numbers are bigger than the length on nums
-            if nums[i] > len(nums):
-                continue
-
-            # Otherwise, do the chain switcheroo thingy
+            # Do the chain switcheroo thingy
             # Meaning move a number in a number-1 place,
             # move the number that was there a num-1 place too and so on
             number_to_place = nums[i]
+            # Ignore numbers less than 1 and bigger than len(nums)
+            # Also numbers that are already in place
             while 1 <= number_to_place <= len(nums) and nums[number_to_place - 1] != number_to_place:
 
                 buffer = nums[number_to_place - 1]
