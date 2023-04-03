@@ -7,16 +7,23 @@ class Solution:
 
         # Triage people into:
 
-        # Chubbies: Maybe can share a boat with a skinny,
-        # but otherwise require a whole boat
-        chubbies = [person for person in people if person > limit / 2]
+        chubbies, skinnies, midsizes = [], [], []
 
-        # Skinnies: Maybe can share a boat with a chubby,
-        # but otherwise fit 2 in a boat
-        skinnies = [person for person in people if person < limit / 2]
+        for person in people:
 
-        # Can share a boat with self or any skinny
-        midsizes = [person for person in people if person == limit / 2]
+            if person > limit / 2:
+                # Chubbies: Maybe can share a boat with a skinny,
+                # but otherwise require a whole boat
+                chubbies.append(person)
+
+            elif person < limit / 2:
+                # Skinnies: Maybe can share a boat with a chubby,
+                # but otherwise fit 2 in a boat
+                skinnies.append(person)
+
+            else:
+                # Can share a boat with self or any skinny
+                midsizes.append(person)
 
         #print(skinnies, midsizes, chubbies)
         
