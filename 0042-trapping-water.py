@@ -4,19 +4,6 @@
 class Solution:
     def trap(self, height):
 
-        # Max wall from the left
-
-        max_left = []
-        for wall in height:
-            if not max_left:
-                max_left.append(wall)
-            elif wall > max_left[-1]:
-                max_left.append(wall)
-            else:
-                max_left.append(max_left[-1])
-
-        #print(max_left)
-
         # Max wall from the right
         max_right = []
         for wall in height[::-1]:
@@ -27,12 +14,18 @@ class Solution:
             else:
                 max_right.append(max_right[-1])
 
-        #print(max_right[::-1])
+        # Calculate Max wall from the left and water at the same time
 
-        # Calculate water volume
+        max_left = 0
         water = 0
+
         for pos, wall in enumerate(height):
-            water += min(max_left[pos], max_right[-pos-1]) - wall
+            if max_left == 0:
+                max_left = wall
+            elif wall > max_left:
+                max_left = wall
+
+            water += min(max_left, max_right[-pos-1]) - wall
 
         return water
 
@@ -47,11 +40,17 @@ def main():
         [1, 2, 3],
         [1],
         [10, 0, 11],
+        [0,1,0,2,1,0,1,3,2,1,2,1]*10000, 
+
     ]
     for height in test_cases:
         result = solution.trap(height)
-        print(height, result)
+        print(height[:20], result)
+
 
 if __name__ == "__main__":
-    import random
+    import time
+    start = time.time()
     main()
+    elapsed = time.time() - start
+    print(elapsed)
