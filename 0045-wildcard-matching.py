@@ -3,7 +3,13 @@
 
 class Solution:
 
+    def __init__(self):
+        self.cache = {}
+
     def isMatch(self, s, p):
+
+        if (s, p) in self.cache:
+            return self.cache[(s, p)]
 
         #print(f"CALL: s='{s}', p='{p}'")
 
@@ -40,8 +46,10 @@ class Solution:
 
                     # Next step would be recursive comparison
                     if self.isMatch(s_left, p_left) and self.isMatch(s_right, p_right):
+                        self.cache[(s, p)] = True
                         return True
             else:
+                self.cache[(s, p)] = False
                 return False
 
         # 2. "?" Pattern
@@ -59,6 +67,7 @@ class Solution:
             # If it is one ? and one character in needle
             if p=="?" and len(s) == 1:
                 #print("2. p==? len(s)==1")
+                self.cache[(s, p)] = True
                 return True
 
             p_left, p_right = p[:q_pos], p[q_pos+1:]
@@ -71,8 +80,10 @@ class Solution:
 
                 # Next step would be recursive comparison
                 if self.isMatch(s_left, p_left) and self.isMatch(s_right, p_right):
+                    self.cache[(s, p)] = True
                     return True
             
+            self.cache[(s, p)] = False
             return False
 
         # 3. "*" Pattern
@@ -80,17 +91,20 @@ class Solution:
         # At this moment p is either empty or * (or multiple *, which doesn't matter)
         if s=="" and p=="":
             #print('3. s=="" and p=="", True')
+            self.cache[(s, p)] = True
             return True
         # * or multiple *s
         elif p=="*" or p!="" and p.count("*") == len(p):
             #print('3. p=="*", True')
+            self.cache[(s, p)] = True
             return True
         elif s!="" and p=="":
             #print('3. s!="" and p=="", False')
+            self.cache[(s, p)] = False
             return False
 
         # Should never reach this one
-
+        self.cache[(s, p)] = False
         return False
 
 def main():
