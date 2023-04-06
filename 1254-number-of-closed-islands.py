@@ -14,6 +14,7 @@ class Solution:
         size_x = len(grid)
         size_y = len(grid[0])
 
+        # Relative neighbors for flood fill 
         directions = ((-1, -0), (0, -1), (1, 0), (0, 1))
 
         # Go through the islands
@@ -29,13 +30,14 @@ class Solution:
                 is_bad = False
                 while flood_fill:
 
+                    # Work through the list of cells to work through
                     current_cell = flood_fill.pop()  
                     x, y = current_cell
 
                     # Update grid as visited
                     grid[x][y] = 2
 
-                    # Non closed islands would touch the sides of the map
+                    # If it touches the edge - it is not a "closed" island
                     if x == 0 or y == 0 or x == size_x-1 or y == size_y-1:
                         is_bad = True
                     
@@ -43,11 +45,14 @@ class Solution:
                     for dx, dy in directions:
                         new_x = x + dx
                         new_y = y + dy
-                        # Adjacent cell is out of bounds
-                        # Ignore water or visited
+
+                        # Check if Adjacent cell is in bounds
                         if size_x - 1 >= new_x >= 0 and size_y - 1 >= new_y >= 0:
+
+                            # Ignore water or visited
                             if grid[new_x][new_y] in (1, 2):
                                 continue
+                            # Add to the list of cells to go thorough
                             flood_fill.append((new_x, new_y))
 
                 # If we were never next to edge - its a desired, closed island
