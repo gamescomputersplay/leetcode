@@ -3,10 +3,84 @@
 
 class Solution:
 
+    def isMatch(self, s, p):
+
+        # Keep track of the position to return to:
+        # (position of "*" in pattern, position of the first character to match in string)
+        backtrack_log = []
+
+        s_pointer = 0
+        p_pointer = 0
+
+        while True:
+
+            # try:
+            #     print(s_pointer, p_pointer, s[s_pointer], p[p_pointer], backtrack_log)
+            # except:
+            #     print(s_pointer, p_pointer, backtrack_log)
+
+            # Both reached the end at the same time, matching successful
+            if p_pointer == len(p) and s_pointer == len(s):
+                return True
+            
+            # End of S, but P is on "*", skip "*"
+            elif s_pointer == len(s) and p[p_pointer] == "*" :
+                pass
+
+            # Match failed:
+            # - either reached the end not at the same time, 
+            # - or non-wild character doesn't match
+            # Need to go back to the last back tracking position
+            elif p_pointer == len(p) and s_pointer != len(s) or \
+                 p_pointer != len(p) and s_pointer == len(s) or \
+                 p[p_pointer] not in ("*", "?") and p[p_pointer] != s[s_pointer]:
+                
+                # No backtracking to return to: Matching fail
+                if not backtrack_log:
+                    return False
+                
+                # Restore the backtracking position
+                s_pointer, p_pointer = backtrack_log.pop()
+                # But with S one place to the right
+                s_pointer += 1
+
+                # If there is no more S to go
+                if s_pointer == len(s):
+                    # There is nothing after * anyway
+                    if p_pointer == len(p) - 1:
+                        return True
+                    # But if there is
+                    return False
+                
+                # Save the updated backtracking info
+                backtrack_log.append((s_pointer, p_pointer))
+
+ 
+            # S and P have the same symbol or P has "?"
+            elif p[p_pointer] == s[s_pointer] or p[p_pointer] =="?":
+                s_pointer += 1
+
+            # P has "*"
+            elif p[p_pointer] =="*":
+                # Set up a new point for backtracking
+                backtrack_log.append((s_pointer, p_pointer))
+            
+            # Next character in P
+            p_pointer += 1
+
+        # Shouldn't reach this
+        return False
+
+
+
+
+    # First version, based on looking for non-wild parts and
+    # recursively checking parts around them
+
     def __init__(self):
         self.cache = {}
 
-    def isMatch(self, s, p):
+    def isMatch_v1(self, s, p):
 
         if (s, p) in self.cache:
             return self.cache[(s, p)]
@@ -45,7 +119,7 @@ class Solution:
                     #print(f"1. found s split:, '{s_left}', '{s_mid}', '{s_right}'")
 
                     # Next step would be recursive comparison
-                    if self.isMatch(s_left, p_left) and self.isMatch(s_right, p_right):
+                    if self.isMatch_v1(s_left, p_left) and self.isMatch_v1(s_right, p_right):
                         self.cache[(s, p)] = True
                         return True
             else:
@@ -79,7 +153,7 @@ class Solution:
                 #print(f"2. ? split:, '{s_left}', ?, '{s_right}'")
 
                 # Next step would be recursive comparison
-                if self.isMatch(s_left, p_left) and self.isMatch(s_right, p_right):
+                if self.isMatch_v1(s_left, p_left) and self.isMatch_v1(s_right, p_right):
                     self.cache[(s, p)] = True
                     return True
             
@@ -113,8 +187,10 @@ def main():
     solution = Solution()
 
     test_cases = [
+        ("abb", "*a*b"),
+        ("abcd", "a*bc*?"),
         ("aa", "a"),
-        ("aa", "*"),
+        ("aa", "aa***"),
         ("cb", "?a"),
         ("cb", "c?"),
         ("saaaxxxbbbddccc", "?aaa???bbb**ccc"),
@@ -134,8 +210,10 @@ def main():
     for s, p in test_cases:
         start = time.time()
         result = solution.isMatch(s, p)
+        result1 = solution.isMatch_v1(s, p)
         elapsed = time.time() - start
-        print(s[:50], p[:50], result, elapsed, "\n")
+        print(s[:50], p[:50], result, elapsed, result==result1, "\n")
+        #break
 
 if __name__ == "__main__":
     import time
