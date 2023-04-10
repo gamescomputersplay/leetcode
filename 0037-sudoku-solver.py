@@ -19,13 +19,22 @@ class Solution:
                     return False
             return True
 
+        # NUmber already present in rows and cols
+        rows, cols = [set() for _ in range(9)], [set() for _ in range(9)]
+        for i in range(9):
+            for j in range(9):  
+                if board[i][j] != ".":
+                    rows[i].add(board[i][j])
+                    cols[j].add(board[i][j])
+
+
         # Dict of cells and their options
         options = {}
         for i in range(9):
             for j in range(9):
                 if board[i][j] == ".":
-                    options[(i, j)] = [str(i) for i in range(1, 10)]
-
+                    possible_options = set((str(i) for i in range(1, 10))) - rows[i] - cols[j]
+                    options[(i, j)] = list(possible_options)
         # Backtracking stack. It will contain backtracking point as:
         # [(i, j, index of next element to try), ...]
         stack = []
