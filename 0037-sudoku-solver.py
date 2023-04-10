@@ -14,39 +14,50 @@ class Solution:
                     return False
                 if board[i][n] == number and n != j:
                     return False
-                x, y = houses[(i,j)][n]
+                x, y = house_map[(i,j)][n]
                 if board[x][y] == number and x != i and y != j:
                     return False
             return True
 
-        # NUmber already present in rows and cols
-        rows, cols = [set() for _ in range(9)], [set() for _ in range(9)]
+        # Helper to optimize checking houses
+        house_map = {}
+        for i in range(9):
+            for j in range(9):
+                house_map[(i,j)] = []
+                for n in range(9):
+                    house_map[(i,j)].append((i//3*3 + n%3, j//3*3 + n//3))
+
+        # Numbers already present in rows and cols
+        rows = [set() for _ in range(9)]
+        cols = [set() for _ in range(9)]
+        houses = [set() for _ in range(9)]
         for i in range(9):
             for j in range(9):  
                 if board[i][j] != ".":
                     rows[i].add(board[i][j])
                     cols[j].add(board[i][j])
-
+                    house_n = i//3 * 3 + j//3
+                    houses[house_n].add(board[i][j])
 
         # Dict of cells and their options
         options = {}
         for i in range(9):
             for j in range(9):
                 if board[i][j] == ".":
-                    possible_options = set((str(i) for i in range(1, 10))) - rows[i] - cols[j]
-                    options[(i, j)] = list(possible_options)
+                    house_n = i//3 * 3 + j//3
+                    possible_options = set((str(i) for i in range(1, 10))) - \
+                                       rows[i] - cols[j] - houses[house_n]
+                    # If there is only one option - write it down
+                    if len(possible_options) == 1:
+                        board[i][j] = possible_options.pop()
+                    # Otherwise -- keep the list of options
+                    else:
+                        options[(i, j)] = list(possible_options)
+
+
         # Backtracking stack. It will contain backtracking point as:
         # [(i, j, index of next element to try), ...]
         stack = []
-
-        # Helper to optimize checking houses
-        houses = {}
-        for i in range(9):
-            for j in range(9):
-                houses[(i,j)] = []
-                for n in range(9):
-                    houses[(i,j)].append((i//3*3 + n%3, j//3*3 + n//3))
-
 
         # Go through all the cells
         i, j = 0, 0
