@@ -7,12 +7,13 @@ class Solution:
         stack = []
 
         brackets = {"(": ")", "[": "]", "{": "}"}
+        opening_brackets = set(brackets.keys())
 
         # Go through all characters in the string
         for char in s:
 
             # Opening bracket: Add to stack
-            if char in brackets.keys():
+            if char in opening_brackets:
                 stack.append(char)
             
             # Closing bracket and stack is not empty
@@ -48,6 +49,7 @@ def main():
         "([]))",
         "(([])",
         "({[]})",
+        # "({[]})" * 1000,
     ]
     for test_case in test_cases:
         result = solution.isValid(test_case)
@@ -55,3 +57,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # import time
+    # start = time.time()
+    # for _ in range(1000):
+    #     main()
+    # elapsed = time.time() - start
+    # print(elapsed)
