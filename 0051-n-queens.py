@@ -8,6 +8,10 @@ class Solution:
             ''' Check if current position is legit.
             Only the last queen i snew, so only check her
             '''
+            # Quick test: if numbers are not unique position is not legit
+            if len(set(positions)) != len(positions):
+                return False
+            
             # Look at all previous queens
             for col, position in enumerate(positions[:-1]):
 
@@ -16,8 +20,9 @@ class Solution:
 
                 # Does the queen in this column has the same coordinate as
                 # the last queen (also if diagonal shift added/removed)
-                if position in (-diag_shift + positions[-1], positions[-1], diag_shift + positions[-1]):
+                if position in (-diag_shift + positions[-1], diag_shift + positions[-1]):
                     return False
+
             return True
 
         # Track "Queens so far" and "next row to test"
@@ -45,8 +50,10 @@ class Solution:
                 
                 else:
                     # Create a fork:
+
                     # 1. Continue with the current queen later
                     stack[-1][-1] += 1
+                    
                     # 2 Add new queen for right now
                     new_queen = stack[-1].copy()
                     new_queen[-1] -= 1
@@ -67,10 +74,19 @@ def main():
     '''
     solution = Solution()
 
-    test_cases = [i for i in range(1, 10)]
+    test_cases = [i for i in range(4, 5)]
     for n in test_cases:
         result = solution.solveNQueens(n)
         print(f"{n}:{len(result)} {result[:5]}")
 
+def big_case(size=11):
+    solution = Solution()
+    start = time.time()
+    solution.solveNQueens(size)
+    elapsed = time.time() - start
+    print(elapsed)
+
 if __name__ == "__main__":
+    import time
     main()
+    big_case()
