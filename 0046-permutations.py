@@ -13,9 +13,10 @@ class Solution:
 
             new_nums = nums.copy()
             new_nums.remove(num)
-            
+
             for perm in self.permute(new_nums):
-                result.append([num]+perm)
+                perm.extend([num])
+                result.append(perm)
 
         return result
     
@@ -29,5 +30,15 @@ def main():
         result = solution.permute(nums)
         print(nums, len(result), result[:10])
 
+def big_case(size=10):
+    solution = Solution()
+    nums = [j+1 for j in range(size)]
+    start = time.time()
+    solution.permute(nums)
+    elapsed = time.time() - start
+    print(elapsed)
+
 if __name__ == "__main__":
+    import time
     main()
+    big_case(9)
