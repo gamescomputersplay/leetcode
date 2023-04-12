@@ -4,18 +4,17 @@
 class Solution:
     def simplifyPath(self, path):
 
-        parts = path.split("/")
         good_parts = []
         
-        for part in parts:
+        for part in path.split("/"):
 
             if part in (".", ""):
-                pass
+                continue
             elif part == "..":
                 good_parts.pop() if good_parts else None
             else:
                 good_parts.append(part)
-                
+
         return "/" + "/".join(good_parts)
 
 
