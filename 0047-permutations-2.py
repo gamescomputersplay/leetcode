@@ -4,9 +4,17 @@
 # Similar tp 0046, but with a few extra lines - see comments
 
 class Solution:
+
+    def __init__(self):
+        self.cache = {}
+
     def permuteUnique(self, nums):
 
+        if tuple(nums) in self.cache:
+            return self.cache[tuple(nums)]
+
         if len(nums) == 1:
+            self.cache[tuple(nums)] = [[nums[0]]]
             return [[nums[0]]]
 
         # Use set to filter duplicates
@@ -24,7 +32,9 @@ class Solution:
                 perm.extend([num])
                 result.add(tuple(perm))
 
-        return list(result)
+        results = list(result)
+        self.cache[tuple(nums)] = results
+        return results
     
 def main():
     ''' Test permuteUnique
@@ -41,15 +51,15 @@ def main():
         result = solution.permuteUnique(nums)
         print(nums, len(result), result[:10])
 
-def big_case(size=10):
+def big_case(size=5):
     solution = Solution()
     nums = [j+1 for j in range(size)] * 2
     start = time.time()
-    solution.permute(nums)
+    solution.permuteUnique(nums)
     elapsed = time.time() - start
     print(elapsed)
 
 if __name__ == "__main__":
     import time
     main()
-    #big_case(9)
+    big_case(5)
