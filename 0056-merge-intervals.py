@@ -22,11 +22,7 @@ class Solution:
             else:
                 current_to = max(current_to, to)
 
-            # Write the last interval
-            if pos == len(intervals) - 1:
-                result.append([current_from, current_to])
-
-            #print(pos, (frm, to), result, [current_from, current_to])
+        result.append([current_from, current_to])
 
         return result
 
