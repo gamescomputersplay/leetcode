@@ -4,7 +4,9 @@
 class Solution:
     def generateMatrix(self, n):
 
-        matrix = [[0 for _1 in range(n)] for _2 in range(n)]
+        total = n**2
+
+        matrix = [[0]*n for _ in range(n)]
 
         current_n = 1
         x, y = 0, 0
@@ -13,12 +15,11 @@ class Solution:
         directions = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
         # While there are still numbers to use
-        while current_n < n**2:
+        while current_n < total:
 
             # Go through all 4 sides of a circle
-            for side in range(4):
-
-                dx, dy = directions[side]
+            for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            #for dx, dy in [[0, 1], [1, 0], [0, -1], [-1, 0]]:
 
                 for position in range(side_size):
 
@@ -50,7 +51,7 @@ def main():
     solution = Solution()
 
     test_cases = [
-        1, 2, 3, 4, 5, 10, 11
+        1, 2, 3, 4, 5
         
     ]
     for n in test_cases:
@@ -59,5 +60,16 @@ def main():
         print_matrix(matrix)
         print()
 
+def time_test():
+    solution = Solution()
+    start = time.time()
+    for _ in range(1000):
+        solution.generateMatrix(100)
+    elapsed = time.time() - start
+    print(elapsed)
+
+
 if __name__ == "__main__":
+    import time
     main()
+    time_test()
