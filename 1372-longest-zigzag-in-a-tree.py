@@ -11,21 +11,28 @@
 class Solution:
     def longestZigZag(self, root):
         
+        longest_zigzag = 0
+
         def recursive_zigzag(node):
+
+            nonlocal longest_zigzag
     
             if node.left is not None:
-                left_zigzag = max(1 + recursive_zigzag(node.left)[1], recursive_zigzag(node.left)[0])
+                left_zigzag = 1 + recursive_zigzag(node.left)[1]
             else:
                 left_zigzag = 0
 
             if node.right is not None:
-                right_zigzag = max(1 + recursive_zigzag(node.right)[0], recursive_zigzag(node.right)[1])
+                right_zigzag = 1 + recursive_zigzag(node.right)[0]
             else:
                 right_zigzag = 0
 
+            longest_zigzag = max(longest_zigzag, max(left_zigzag, right_zigzag))
+
             return left_zigzag, right_zigzag
 
-        return max(recursive_zigzag(root))
+        recursive_zigzag(root)
+        return longest_zigzag
 
 
 ### Failed case
