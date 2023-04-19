@@ -1,12 +1,8 @@
 ''' https://leetcode.com/problems/same-tree/
 '''
 
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
+from classes import binarytree
+from classes.binarytree import TreeNode
 
 class Solution:
     def isSameTree(self, p, q):
@@ -26,4 +22,10 @@ class Solution:
         # Finally both branches have to be the same:
         return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
 
-# No testing for this one
+if __name__ == "__main__":
+    test_tree_a = binarytree.create_binary_tree([1, 2, None, 3, 4, None, 5])
+    test_tree_b = binarytree.create_binary_tree([1, 2, None, 3, 4, None, 5])
+    test_tree_c = binarytree.create_binary_tree([1, None, 2, 3, None, 4, 5])
+    solution = Solution()
+    print(solution.isSameTree(test_tree_a, test_tree_b))
+    print(solution.isSameTree(test_tree_b, test_tree_c))
