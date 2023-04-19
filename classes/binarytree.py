@@ -81,7 +81,7 @@ def level_order_2_tree(array):
             current_node.left = TreeNode(array[array_pointer])
             node_queue.append(current_node.left)
         array_pointer += 1
-        if array[array_pointer] is not None:
+        if array_pointer < len(array) and array[array_pointer] is not None:
             current_node.right = TreeNode(array[array_pointer])
             node_queue.append(current_node.right)
         array_pointer += 1
@@ -94,8 +94,11 @@ def level_order_2_tree(array):
 if __name__ == "__main__":
     print("This library is a definition and some helpers to work with binary trees")
     print("Here's a short demo:\n")
+
     demo_list = [1, 2, 3, None, 4, 5, None, 6, 7, None, 8]
     print(f"This is a tree created from list representation {demo_list}:\n{list_2_tree(demo_list)}\n")
+
     demo_level_order = [1,None,1,1,1,]
+    demo_level_order = [1,None,2,3]
     print(f"This is a tree created from level-order representation {demo_level_order}:")
     print(f"{level_order_2_tree(demo_level_order)}\n")
