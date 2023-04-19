@@ -65,6 +65,9 @@ def level_order_2_tree(array):
     Return root node
     '''
 
+    if not array:
+        return None
+
     array_pointer = 1
     node_queue = [TreeNode(array[0])]
     queue_pointer = 0
@@ -98,7 +101,6 @@ if __name__ == "__main__":
     demo_list = [1, 2, 3, None, 4, 5, None, 6, 7, None, 8]
     print(f"This is a tree created from list representation {demo_list}:\n{list_2_tree(demo_list)}\n")
 
-    demo_level_order = [1,None,1,1,1,]
-    demo_level_order = [1,None,2,3]
+    demo_level_order = [1,None,2,3,4]
     print(f"This is a tree created from level-order representation {demo_level_order}:")
     print(f"{level_order_2_tree(demo_level_order)}\n")
