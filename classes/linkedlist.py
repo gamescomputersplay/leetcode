@@ -57,3 +57,10 @@ def create_linked_list(array):
 
     # But it is the first one we need to return
     return first
+
+
+if __name__ == "__main__":
+    print("This library is a definition and some helpers to work with linked lists")
+    print("Here's a short demo:")
+    demo_list = [1, 2, 3, 4, 5]
+    print(f"This is a list created from {demo_list}: {create_linked_list(demo_list)}")
