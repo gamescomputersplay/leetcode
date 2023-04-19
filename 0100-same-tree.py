@@ -23,9 +23,9 @@ class Solution:
         return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
 
 if __name__ == "__main__":
-    test_tree_a = binarytree.create_binary_tree([1, 2, None, 3, 4, None, 5])
-    test_tree_b = binarytree.create_binary_tree([1, 2, None, 3, 4, None, 5])
-    test_tree_c = binarytree.create_binary_tree([1, None, 2, 3, None, 4, 5])
+    test_tree_a = binarytree.list_2_tree([1, 2, None, 3, 4, None, 5])
+    test_tree_b = binarytree.list_2_tree([1, 2, None, 3, 4, None, 5])
+    test_tree_c = binarytree.list_2_tree([1, None, 2, None, None, 4, 5])
     solution = Solution()
-    print(solution.isSameTree(test_tree_a, test_tree_b))
-    print(solution.isSameTree(test_tree_b, test_tree_c))
+    print(test_tree_a, test_tree_b, solution.isSameTree(test_tree_a, test_tree_b))
+    print(test_tree_b, test_tree_c, solution.isSameTree(test_tree_b, test_tree_c))

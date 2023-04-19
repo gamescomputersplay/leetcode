@@ -42,7 +42,7 @@ class TreeNode:
         return "Tree Node: " + str(list_representation)
 
 
-def create_binary_tree(array):
+def list_2_tree(array):
     ''' Create a binary tree from a list.
     Return root node
     '''
@@ -60,9 +60,42 @@ def create_binary_tree(array):
 
     return recursive_node_create(0)
 
+def level_order_2_tree(array):
+    ''' Create a binary tree from a level-order representation.
+    Return root node
+    '''
+
+    array_pointer = 1
+    node_queue = [TreeNode(array[0])]
+    queue_pointer = 0
+
+    while queue_pointer < len(node_queue) and array_pointer < len(array):
+
+        current_node = node_queue[queue_pointer]
+
+        if current_node is None:
+            queue_pointer += 1
+            continue
+
+        if array[array_pointer] is not None:
+            current_node.left = TreeNode(array[array_pointer])
+            node_queue.append(current_node.left)
+        array_pointer += 1
+        if array[array_pointer] is not None:
+            current_node.right = TreeNode(array[array_pointer])
+            node_queue.append(current_node.right)
+        array_pointer += 1
+        
+        queue_pointer += 1
+
+    return node_queue[0]
+
 
 if __name__ == "__main__":
     print("This library is a definition and some helpers to work with binary trees")
-    print("Here's a short demo:")
+    print("Here's a short demo:\n")
     demo_list = [1, 2, 3, None, 4, 5, None, 6, 7, None, 8]
-    print(f"This is a tree created from {demo_list}: {create_binary_tree(demo_list)}")
+    print(f"This is a tree created from list representation {demo_list}:\n{list_2_tree(demo_list)}\n")
+    demo_level_order = [1,None,1,1,1,]
+    print(f"This is a tree created from level-order representation {demo_level_order}:")
+    print(f"{level_order_2_tree(demo_level_order)}\n")
