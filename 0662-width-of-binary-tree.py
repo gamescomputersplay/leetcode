@@ -7,17 +7,7 @@ from classes.binarytree import TreeNode
 class Solution:
     def widthOfBinaryTree(self, root):
 
-        # List representation code with minor changes copied from my binarytree class
-
-        def add_item(array, item, position):
-            ''' Add item to the array at the position "position",
-            pad non-exiting position before it with None
-            '''
-            while len(array) < position:
-                array.append(None)
-            array.append(item)
-
-        list_representation = []
+        node_positions = []
 
         queue_pointer = 0
         queue = [(root, 0)]
@@ -25,7 +15,7 @@ class Solution:
         while len(queue) > queue_pointer:
 
             item, item_position = queue[queue_pointer]
-            add_item(list_representation, item.val, item_position)
+            node_positions.append(item_position)
 
             if item.left is not None:
                 queue.append((item.left, item_position * 2 + 1))
@@ -35,42 +25,43 @@ class Solution:
             queue_pointer += 1
 
         ## End of the code from binarytree class
-
+        #print(node_positions)
 
         # Not go through the list representation and find
         # max distances within level between non-None elements
         max_width = 0
         level_size = 1
         level_start = 0
+        leftmost = None
+        rightmost = None
+        
+        for position in node_positions:
 
-        while True:
+            # Reset variables for the next level
+            if position >= level_start + level_size:
 
-            leftmost = None
-            rightmost = None
-            reached_end = False
-
-            for i in range(level_size):
-
-                if level_start + i >= len(list_representation):
-                    reached_end = True
-                    break
-                if leftmost is None and list_representation[level_start + i] is not None:
-                    leftmost = i
-                if list_representation[level_start + i] is not None:
-                    rightmost = i
-            if rightmost is not None:
+                # Calculate width and maxwidth for this level
                 width = rightmost - leftmost + 1
                 max_width = max(max_width, width)
+
+                leftmost = None
+                rightmost = None
+
+                # Set data for the next level
+                level_start += level_size
+                level_size *= 2
+
             
-            # Set start of the level and level size for the next level
-            level_start += level_size
-            level_size *= 2
+            # Track left and right
+            if leftmost is None:
+                leftmost = position
+            rightmost = position
 
-            if reached_end:
-                return max_width
+        # Check width for the last time
+        width = rightmost - leftmost + 1
+        max_width = max(max_width, width)
 
-        # Should not reach this line
-        return 0
+        return max_width
     
 
 def main():
@@ -89,7 +80,7 @@ def main():
         root = binarytree.level_order_2_tree(level_order)
         start = time.time()
         result = solution.widthOfBinaryTree(root)
-        elapsed = time.time() - time
+        elapsed = time.time() - start
         print(f"{level_order}, {result}, {elapsed}s\n")
 
 if __name__ == "__main__":
