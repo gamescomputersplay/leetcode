@@ -7,36 +7,22 @@ from classes.binarytree import TreeNode
 class Solution:
     def widthOfBinaryTree(self, root):
 
-        node_positions = []
-
+        # Variables to queue nodes and detect their position in the list representation
         queue_pointer = 0
         queue = [(root, 0)]
 
-        while len(queue) > queue_pointer:
-
-            item, item_position = queue[queue_pointer]
-            node_positions.append(item_position)
-
-            if item.left is not None:
-                queue.append((item.left, item_position * 2 + 1))
-            if item.right is not None:
-                queue.append((item.right, item_position * 2 + 2))
-
-            queue_pointer += 1
-
-        ## End of the code from binarytree class
-        #print(node_positions)
-
-        # Not go through the list representation and find
-        # max distances within level between non-None elements
+        # Variables to track level size, width etc
         max_width = 0
         level_size = 1
         level_start = 0
         leftmost = None
         rightmost = None
-        
-        for position in node_positions:
 
+        while len(queue) > queue_pointer:
+
+            item, position = queue[queue_pointer]
+
+            # Detect width
             # Reset variables for the next level
             if position >= level_start + level_size:
 
@@ -56,6 +42,15 @@ class Solution:
             if leftmost is None:
                 leftmost = position
             rightmost = position
+
+            # Append to a queue
+            if item.left is not None:
+                queue.append((item.left, position * 2 + 1))
+            if item.right is not None:
+                queue.append((item.right, position * 2 + 2))
+
+            queue_pointer += 1
+
 
         # Check width for the last time
         width = rightmost - leftmost + 1
