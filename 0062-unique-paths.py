@@ -4,25 +4,13 @@
 class Solution:
     def uniquePaths(self, m, n):
 
-        matrix = []
+        matrix = [[1] * n for _ in range(m)]
         
-        for i in range(m):
+        for i in range(1, m):
 
-            matrix.append([])
+            for j in range(1, n):
 
-            for j in range(n):
-
-                if i == 0 and j == 0:
-                    matrix[-1].append(1)
-
-                elif i == 0:
-                    matrix[-1].append(matrix[i][j-1])
-
-                elif j == 0:
-                    matrix[-1].append(matrix[i-1][j])
-                    
-                else:
-                    matrix[-1].append(matrix[i-1][j] + matrix[i][j-1])
+                matrix[i][j] = matrix[i-1][j] + matrix[i][j-1]
 
         return matrix[-1][-1]
     
@@ -43,5 +31,15 @@ def main():
         result = solution.uniquePaths(m, n)
         print(m, n, result)
 
+def time_test():
+    solution = Solution()
+    start = time.time()
+    for _ in range(10):
+        solution.uniquePaths(1000, 1000)
+    elapsed = time.time() - start
+    print(elapsed)
+
 if __name__ == "__main__":
+    import time
     main()
+    time_test()
