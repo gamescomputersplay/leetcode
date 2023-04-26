@@ -4,6 +4,19 @@
 class Solution:
 
     def addDigits(self, num):
+
+        the_sum = 0
+        while num > 0:
+            digit = num % 10
+            num //= 10
+            the_sum += digit
+
+        while the_sum > 9:
+            the_sum -= 9
+
+        return the_sum
+
+    def addDigits_prev(self, num):
         if num < 10:
             return num
         return self.addDigits(sum(int(c) for c in str(num)))
