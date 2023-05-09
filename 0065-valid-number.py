@@ -3,7 +3,27 @@
 
 class Solution:
     def isNumber(self, s):
-        return False
+
+        def is_float(s):
+            return False
+        
+        def is_int(s):
+            for pos, char in enumerate(s):
+                if pos == 0 and char in ("-", "+"):
+                    continue
+                if char not in "0123456789":
+                    return False
+            return True
+
+        # To ignore "E" and "e" distinction
+        s = s.upper()
+
+        if "E" in s:
+
+            coefficient, exponent = s.split("E")
+            return is_float(coefficient) and is_int(exponent)
+
+        return is_float(s)
 
 def main():
     ''' Test isNumber
