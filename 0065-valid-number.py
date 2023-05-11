@@ -41,7 +41,7 @@ class Solution:
 
         return is_float(s)
 
-def main():
+def main(verbose=True):
     ''' Test isNumber
     '''
     solution = Solution()
@@ -53,7 +53,17 @@ def main():
 
     for s in test_cases:
         result = solution.isNumber(s)
-        print(s, result)
+        if verbose:
+            print(s, result)
+
+def test_timing(runs=10000):
+    start = time.time()
+    for _ in range(runs):
+        main(verbose=False)
+    elapsed = time.time() - start
+    print(elapsed)
 
 if __name__ == "__main__":
+    import time
     main()
+    test_timing()
