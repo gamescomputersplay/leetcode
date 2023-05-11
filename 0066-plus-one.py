@@ -10,13 +10,9 @@ class Solution:
 
         for pos in range(len(digits)- 1, -1, -1):
 
-            n = digits[pos]
-            n += carry
-            if n == 10:
-                n = 0
-                carry = 1
-            else: carry = 0
-            digits[pos] = n
+            digits[pos] += carry
+            carry = digits[pos]//10
+            digits[pos] = digits[pos]%10
 
         if carry == 1:
             digits = [1] + digits
