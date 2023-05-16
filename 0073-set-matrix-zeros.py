@@ -2,7 +2,36 @@
 '''
 
 class Solution:
+
     def setZeroes(self, matrix):
+
+        # Check first row and column for zeros
+        first_row_has_zero = any(element == 0 for element in matrix[0])
+        first_col_has_zero = any(matrix[row][0] == 0 for row in range(len(matrix)))
+
+        # If element is zero, set first element in row/column to zero
+        for row, line in enumerate(matrix):
+            for col, element in enumerate(line):
+                if element == 0:
+                    matrix[row][0] = 0
+                    matrix[0][col] = 0
+
+        # Set zeroes in the matrix
+        for row in range(1, len(matrix)):
+            for col in range(1, len(matrix[0])):
+                if matrix[0][col] == 0 or matrix[row][0] == 0:
+                    matrix[row][col] = 0
+
+        if first_row_has_zero:
+            for col in range(len(matrix[0])):
+                matrix[0][col] = 0
+        if first_col_has_zero:
+            for row in range(len(matrix)):
+                matrix[row][0] = 0
+
+        return None
+
+    def setZeroes_v1(self, matrix):
 
         # Track which rows and cols need to be zeroed
         zero_rows = set()
