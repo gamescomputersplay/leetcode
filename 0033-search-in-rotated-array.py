@@ -2,6 +2,45 @@
 '''
 
 class Solution:
+
+    def search_one_pass(self, nums, target):
+        ''' One-pass version '''
+
+        left,right = 0, len(nums)
+
+        leftmost, rightmost = 0, len(nums) - 1
+
+        while True:
+        #for _ in range(20):
+
+            center = (left + right) // 2
+            #print(left, center, right)
+
+            if nums[center] == target:
+                return center
+
+            if right - left == 1:
+                return -1
+
+            # Left half
+            if nums[leftmost] < nums[center]:
+                if target < nums[leftmost]:
+                    left = center
+                elif target < nums[center]:
+                    right = center
+                else:
+                    left = center
+            # Right half
+            elif nums[center] <= nums[rightmost]:
+                if target > nums[rightmost]:
+                    right = center
+                elif target > nums[center]:
+                    left = center
+                else:
+                    right = center
+
+
+
     def search(self, nums, target):
 
         def binary_search(first, last):
@@ -107,4 +146,4 @@ def random_tests(runs):
 if __name__ == "__main__":
     import random
     main()
-    random_tests(1000)
+    random_tests(10000)
