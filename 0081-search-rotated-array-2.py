@@ -2,69 +2,45 @@
 '''
 
 class Solution:
-    # I gave up and just used deduplication + search if it was unique
-    
     def search(self, nums, target):
 
-        def binary_search(first, last):
-            ''' Search in the segment nums[first: last],
-            assuming there are no rotation.
-            It is assumed that last > first (meaning the segment is not empty)
-            '''
+        left,right = 0, len(nums)
 
-            left, right = first, last
+        leftmost, rightmost = 0, len(nums) - 1
 
-            while True:
-
-                center = (left + right) // 2
-
-                if unums[center] == target:
-                    return True
-
-                if unums[center] > target and (center == first or unums[center - 1] < target):
-                    return False
-                if unums[center] < target and (center == last - 1 or unums[center + 1] > target):
-                    return False
-
-                if unums[center] > target:
-                    right = center
-                else:
-                    left = center 
-
-        # Deduplicate the nums array
-        unums = [num for i, num in enumerate(nums) if i==0 or num != nums[i-1]]
-        if len(unums) > 1 and unums[0] == unums[-1]:
-            unums.pop()
-
-        # First, check that the array was rotated at all
-        # "=" will also cover 1-element array
-        if unums[-1] >= unums[0]:
-            return binary_search(0, len(unums))
-
-        # Find the rotation point (first element of the right part)
-        left, right = 0, len(unums)
         while True:
+        #for _ in range(20):
 
             center = (left + right) // 2
+            print(left, center, right)
 
-            if center < len(unums) - 2 and unums[center] > unums[center + 1]:
-                rotation = center + 1
-                break
+            if nums[center] == target:
+                return True
 
-            if center > 0 and unums[center] < unums[center - 1]:
-                rotation = center
-                break
+            if right - left == 1:
+                return False
 
-            if unums[center] < unums[-1]:
-                right = center
+            # Left half
+            if nums[leftmost] < nums[center]:
+                if target < nums[leftmost]:
+                    left = center
+                elif target < nums[center]:
+                    right = center
+                else:
+                    left = center
+
+            # Right half
+            elif nums[center] < nums[rightmost]:
+                if target > nums[rightmost]:
+                    right = center
+                elif target > nums[center]:
+                    left = center
+                else:
+                    right = center
+
+            # Not enough info
             else:
-                left = center 
-
-        if unums[0] <= target:
-            return binary_search(0, rotation)
-
-        return binary_search(rotation, len(unums))
-
+                left += 1
 
 
 def main():
