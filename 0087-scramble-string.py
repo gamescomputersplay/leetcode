@@ -2,9 +2,9 @@
 '''
 
 class Solution:
-    
+
     def __init__(self):
-       self.cache = {}
+        self.cache = {}
 
     def isScramble(self, s1, s2):
 
@@ -54,10 +54,10 @@ def main():
         ("great", "rgeat"), #True
         ("abcde", "caebd"), #False
         ("a", "a"), # True
-        ("ab", "ba"), 
-        ("ab", "ba"), 
-        ("aa", "aa"), 
-        ("aaaaaaaaBa", "aBaaaaaaaa"), 
+        ("ab", "ba"),
+        ("ab", "ba"),
+        ("aa", "aa"),
+        ("aaaaaaaaBa", "aBaaaaaaaa"),
         ("abcdefghikjlmnopqrstuvwxyzabcd", "nopqrstuvwxyzabcdhikjlmcdefgab"),
     ]
     for s1, s2 in test_cases:
