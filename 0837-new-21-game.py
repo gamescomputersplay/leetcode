@@ -39,5 +39,19 @@ def main():
         result = solution.new21Game(n, k, maxPts)
         print(f"{n}, {k}, {maxPts}: {result}")
 
+
+
+def long_case():
+    solution = Solution()
+
+    n, k, maxPts = (9811, 8776, 1096)
+    start = time.time()
+    result = solution.new21Game(n, k, maxPts)
+    elapsed = time.time() - start
+
+    print(n, k, maxPts, elapsed, "s")
+
 if __name__ == "__main__":
+    import time
     main()
+    long_case()
