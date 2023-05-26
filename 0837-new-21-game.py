@@ -13,12 +13,13 @@ class Solution:
         for _ in range(k):
 
             current_prob = probs[pointer]
-            for step in range(1, maxPts + 1):
-                probs[pointer + step] += current_prob / maxPts
+            add_prob = current_prob / maxPts
+            for step in range(pointer + 1, pointer + maxPts + 1):
+                probs[step] += add_prob
             probs[pointer] = 0
 
             pointer += 1
-
+            #print(probs)
         answer = sum(probs[:n+1])
 
         return answer
@@ -33,6 +34,7 @@ def main():
         (6, 1, 10),
         (21, 17, 10),
         (9811, 8776, 1096),
+        (5710, 5070, 8516),
 
     ]
     for n, k, maxPts in test_cases:
@@ -44,7 +46,7 @@ def main():
 def long_case():
     solution = Solution()
 
-    n, k, maxPts = (9811, 8776, 1096)
+    n, k, maxPts = (5710, 5070, 8516)
     start = time.time()
     result = solution.new21Game(n, k, maxPts)
     elapsed = time.time() - start
