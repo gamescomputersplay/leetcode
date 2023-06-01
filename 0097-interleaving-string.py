@@ -2,7 +2,16 @@
 '''
 
 class Solution:
+    def __init__(self):
+        self.cache = {}
+
     def isInterleave(self, s1, s2, s3):
+
+        if len(s1) + len(s2) != len(s3):
+            return False
+
+        if (s1, s2, s3) in self.cache:
+            return self.cache[(s1, s2, s3)]
 
         # One side is empty
         if s1 == "":
@@ -12,16 +21,20 @@ class Solution:
 
         # Clearly letter belongs to one side
         if s1[0] == s3[0] and s2[0] != s3[0]:
-            return self.isInterleave(s1[1:], s2, s3[1:])
+            self.cache[(s1, s2, s3)] = self.isInterleave(s1[1:], s2, s3[1:])
+            return self.cache[(s1, s2, s3)]
         if s1[0] != s3[0] and s2[0] == s3[0]:
-            return self.isInterleave(s1, s2[1:], s3[1:])
+            self.cache[(s1, s2, s3)] = self.isInterleave(s1, s2[1:], s3[1:])
+            return self.cache[(s1, s2, s3)]
 
         # Letter can belong to either side
         if s1[0] == s3[0] and s2[0] == s3[0]:
-            return self.isInterleave(s1[1:], s2, s3[1:]) or self.isInterleave(s1, s2[1:], s3[1:])
+            self.cache[(s1, s2, s3)] = self.isInterleave(s1[1:], s2, s3[1:]) or self.isInterleave(s1, s2[1:], s3[1:])
+            return self.cache[(s1, s2, s3)]
 
         # Letter can belong to neither side
         if s1[0] != s3[0] and s2[0] != s3[0]:
+            self.cache[(s1, s2, s3)] = False
             return False
 
 
@@ -64,7 +77,7 @@ def random_test(length=200):
     solution = Solution()
     start = time.time()
     result = solution.isInterleave(s1, s2, s3)
-    elapsed = start - time.time()
+    elapsed = time.time() - start
     print(f"{len(s3)}, {result}, {elapsed}")
     
     solution = Solution()
@@ -76,7 +89,7 @@ def long_case():
     solution = Solution()
     start = time.time()
     result = solution.isInterleave(s1, s2, s3)
-    elapsed = start - time.time()
+    elapsed = time.time() - start
     print(f"{len(s3)}, {result}, {elapsed}")
 
 if __name__ == "__main__":
