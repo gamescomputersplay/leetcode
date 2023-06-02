@@ -8,16 +8,16 @@ class Solution:
 
             for i in range(1 if not sofar else max(sofar) + 1, n + 1):
 
-                new_sofar = sofar + (i,)
+                new_sofar = sofar.copy()
+                new_sofar.append(i)
                 if len(new_sofar) == k:
-                    result.add(new_sofar)
+                    result.append(new_sofar)
                 else:
                     add_element(new_sofar)
 
-        result = set()
-
-        add_element(())
-        return [list(element) for element in result]
+        result = []
+        add_element([])
+        return result
 
 def main():
     ''' Test combine
