@@ -2,28 +2,19 @@
 '''
 
 class Solution:
-        
-
     def combine(self, n, k):
 
         def add_element(sofar):
 
-            if sofar in done:
-                return
-            done.add(sofar)
+            for i in range(1 if not sofar else max(sofar) + 1, n + 1):
 
-            if len(sofar) == k:
-                result.add(sofar)
-                return
-
-            for i in range(1, n + 1):
-                if i in sofar:
-                    continue
-                new_sofar = tuple(sorted(sofar + (i,)))
-                add_element(new_sofar)
+                new_sofar = sofar + (i,)
+                if len(new_sofar) == k:
+                    result.add(new_sofar)
+                else:
+                    add_element(new_sofar)
 
         result = set()
-        done = set()
 
         add_element(())
         return [list(element) for element in result]
