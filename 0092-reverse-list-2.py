@@ -9,27 +9,6 @@ class Solution:
         if left == right:
             return head
 
-        # count to reserse point
-        curr = head
-        for _ in range(left - 2):
-            curr = curr.next
-
-        last_before_reverse = curr
-        prev = last_before_reverse.next
-        reverse_tail = prev
-        last_before_reverse.next = None
-        curr = prev.next
-
-        # Do the reverse
-        for _ in range(right - left):
-            next = curr.next
-            curr.next = prev
-
-            prev = curr
-            curr = next
-
-        last_before_reverse.next = prev
-        reverse_tail.next = curr
 
         return head
 
@@ -39,9 +18,11 @@ def main():
 
     test_cases = [
         (linkedlist.create_linked_list([1, 2, 3, 4, 5, 6, 7, 8]), 3, 6),
-        (linkedlist.create_linked_list([1, 2, 3, 4, 5, 6, 7, 8]), 2, 3),
-        (linkedlist.create_linked_list([1, 2, 3, 4, 5]), 2, 4),
-        (linkedlist.create_linked_list([1]), 1, 1),
+        (linkedlist.create_linked_list([1, 2, 3, 4, 5, 6, 7, 8]), 1, 3),
+        (linkedlist.create_linked_list([1, 2, 3, 4, 5, 6, 7, 8]), 6, 8),
+        (linkedlist.create_linked_list([1, 2, 3, 4, 5, 6, 7, 8]), 4, 5),
+        #(linkedlist.create_linked_list([1, 2, 3, 4, 5]), 2, 4),
+        #(linkedlist.create_linked_list([1]), 1, 1),
         #(linkedlist.create_linked_list([1, 2]), 1, 2),
     ]
 
