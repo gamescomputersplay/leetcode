@@ -4,6 +4,9 @@
 class Solution:
     def nextGreatestLetter(self, letters, target):
 
+        if  letters[-1] < target < letters[0]:
+            return letters[0]
+
         left = 0
         right = len(letters)
 
