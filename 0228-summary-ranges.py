@@ -4,29 +4,22 @@
 class Solution:
     def summaryRanges(self, nums):
 
-        range_start = None
-        range_end = None
 
         ranges = []
+        start = None
 
-        for element in nums:
+        p = 0
 
-            if range_start is not None:
+        while p < len(nums):
 
-                if element - range_end == 1:
-                    range_end = element
+            if start is None:
+                start = nums[p]
 
-                else:
-                    ranges.append(str(range_end) if range_end == range_start else f"{range_start}->{range_end}")
-                    range_start = None
-                    range_end = None
+            if p == len(nums) - 1 or nums[p+1] - nums[p] > 1:
+                ranges.append(str(start) if nums[p] == start else f"{start}->{nums[p]}")
+                start = None
 
-            if range_start is None:
-                range_start = element
-                range_end = element
-
-        if range_start is not None:
-            ranges.append(str(range_end) if range_end == range_start else f"{range_start}->{range_end}")
+            p += 1
 
         return ranges
 
