@@ -9,13 +9,9 @@ class Solution:
         # 1. Generate hashes of all cols
         col_hashes = {}
 
-        for n in range(size):
+        for col in range(size):
 
-            col = []
-            for row in grid:
-                col.append(str(row[n]))
-
-            col_hash = hash("|".join(col))
+            col_hash = hash("|".join(str(grid[n][col]) for n in range(size)))
             col_hashes[col_hash] = col_hashes.get(col_hash, 0) + 1
 
         # 2. Go through rows and sum up hash hits
