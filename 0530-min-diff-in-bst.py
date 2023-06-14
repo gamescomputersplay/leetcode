@@ -19,24 +19,21 @@ class Solution:
             # Result placeholders
             minval, maxval, mindiff = float("inf"), float("-inf"), float("inf")
 
-            # For either non-None branches
-            for branch in [node.left, node.right]:
-                if branch is None:
-                    continue
+            if node.left is not None:
 
-                # Get min, max, diff
-                branch_min, branch_max, branch_diff = recurse(branch)
+                branch_min, branch_max, branch_diff = recurse(node.left)
 
-                # Keep track of min amd max in all lower branches
                 minval = min(minval, branch_min)
-                maxval = max(maxval, branch_max)
-
-                # Keep track of all possible min differences
-                # That was either seen blow
                 mindiff = min(mindiff, branch_diff)
-                # Or between current node and branch'es edge
-                mindiff = min(mindiff, abs(node.val - branch_min))
                 mindiff = min(mindiff, abs(node.val - branch_max))
+
+            if node.right is not None:
+
+                branch_min, branch_max, branch_diff = recurse(node.right)
+
+                maxval = max(maxval, branch_max)
+                mindiff = min(mindiff, branch_diff)
+                mindiff = min(mindiff, abs(node.val - branch_min))
 
             return min(minval, node.val), max(maxval, node.val), mindiff
 
