@@ -6,12 +6,13 @@ class Solution:
 
         def parse_rec(sofar, s):
 
-            # End recursion of the string is over
-            if s == "":
-                # If you happen to have 4 numbers - return them
-                if len(sofar) == 4:
-                    # But make them list of strings first
-                    result.append([str(s) for s in sofar])
+            # Invalid IPs
+            if len(sofar) == 5 or len(sofar) == 4 and s != "" or len(sofar) < 4 and s == "":
+                return
+
+            # We have exactly the IP address (already checked that s is empty)
+            if len(sofar) == 4:
+                result.append(".".join(sofar))
                 return
 
             p = 1
@@ -29,7 +30,7 @@ class Solution:
 
                 # Recursively try the next number
                 new_sofar = sofar.copy()
-                new_sofar.append(n)
+                new_sofar.append(s[:p])
                 parse_rec(new_sofar, s[p:])
 
                 # Try longer number
@@ -41,7 +42,7 @@ class Solution:
         # Run recursive algorythm
         parse_rec([], s)
         # Convert to strings
-        return [".".join(ip) for ip in result]
+        return result
 
 def main():
     ''' Test restoreIpAddresses
