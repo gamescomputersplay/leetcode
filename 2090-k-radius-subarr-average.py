@@ -12,21 +12,18 @@ class Solution:
         if len(nums) < 1 + 2 * k:
             return [-1] * len(nums)
 
-        result = []
-        running_sum = sum(nums[:k])
+        size = 2 * k + 1
 
-        for pos in range(len(nums)):
+        result = [-1] * k + [None] * (len(nums) - 2 * k) + [-1] * k
+        running_sum = sum(nums[:size])
 
-            if pos + k < len(nums):
-                running_sum += nums[pos + k]
-            if pos - k - 1 >= 0:
-                running_sum -= nums[pos - k - 1]
+        for pos in range(k, len(nums) - k):
 
-            if pos + k >= len(nums) or pos - k < 0:
-                result.append(-1)
-            else:
-                result.append(running_sum // (2 * k + 1))
-            print(pos, running_sum, result[-1])
+            result[pos] = running_sum // size
+
+            if pos + k + 1 < len(nums):
+                running_sum += nums[pos + k + 1]
+            running_sum -= nums[pos - k]
 
         return result
 
@@ -40,7 +37,7 @@ def main():
         ([7,4,3,9,1,8,5,2,6], 3),
         ([100000], 0),
         ([8], 100000),
-        ([1, 2, 3, 4], 1,)
+        ([1, 2, 3, 4, 5, 6], 2,)
     ]
     for nums, k in test_cases:
         result = solution.getAverages(nums, k)
