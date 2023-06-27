@@ -7,48 +7,34 @@ from classes.binarytree import TreeNode
 class Solution:
     def recoverTree(self, root):
 
-        def find_fault(node, allowed_min, allowed_max, is_root=False):
-            ''' Return node with a problem
+        def list_nodes(node):
+            ''' Linear representation of the tree, as (node, value)
             '''
-            
-            # Recursively check for problems in left and right branches
-            # Deeper problems should overtake shallow problems
-            left_problem = None
-            right_problem = None
-            if node.left is not None:
-                left_problem = find_fault(node.left, allowed_min, node.val)
-            if node.right is not None:
-                right_problem = find_fault(node.right, node.val, allowed_max)
+            if node is None:
+                return []
+            return list_nodes(node.left) + [node] + list_nodes(node.right)
 
-            # No deeper problems. Is ihis node a problem
-            if left_problem is None and right_problem is None:
-                if node.val < allowed_min:
-                    return node
-                if node.val > allowed_max:
-                    return node
-                return None
-            #print(left_problem, right_problem)
+        # Generate the list of [node, value]
+        nodes = list_nodes(root)
 
 
-            # If in problem in both branches - fix it
-            if left_problem is not None and right_problem is not None:
-                left_problem.val, right_problem.val = right_problem.val, left_problem.val
-            # If problem is in only one branch - fix it only if on root
-            elif is_root and left_problem is not None and left_problem.val > node.val:
-                left_problem.val, node.val = node.val, left_problem.val
-            elif is_root and right_problem is not None and right_problem.val < node.val:
-                right_problem.val, node.val = node.val, right_problem.val
+        left, right = None, None
 
-            # Otherwise, pass it to the next level
-            else:
-                if left_problem is None:
-                    return right_problem
-                if right_problem is None:
-                    return left_problem
+        # Find first left value with a problem
+        for i in range(len(nodes)-1):
+            if nodes[i].val > nodes[i+1].val:
+                left = nodes[i]
+                break
 
-            return None
+        # Find first right value with a problem
+        for i in range(len(nodes)-1, 0, -1):
+            if nodes[i].val < nodes[i-1].val:
+                right = nodes[i]
+                break
 
-        find_fault(root, float("-inf"), float("inf"), is_root=True)
+        if left and right:
+            left.val, right.val = right.val, left.val
+
         return None
 
 
@@ -58,11 +44,11 @@ def main():
     solution = Solution()
 
     test_cases = [
-        # [2,3,1], #1-3
+        [2,3,1], #1-3
         [1,3,None,None,2], # 1-3
-        # [3,1,4,None,None,2], # 2-3
-        # [5, 10, 8, 2, 4, 7, 9, 1, None, None, None, 6, None, None, 3], # 3-10
-        # [3,None,2,None,1], # 1-3
+        [3,1,4,None,None,2], # 2-3
+        [5, 10, 8, 2, 4, 7, 9, 1, None, None, None, 6, None, None, 3], # 3-10
+        [3,None,2,None,1], # 1-3
 
     ]
     for list_tree in test_cases:
