@@ -4,19 +4,41 @@
 class Solution:
     def kSmallestPairs(self, nums1, nums2, k):
 
+        result = []
         candidates = []
 
-        # Steps from the corner (0 is the corner)
-        for i in range(min(k, len(nums1) + len(nums2))):
-            # Candidates in this step (1, 2, 3)
-            for shift in range(i+1):
+        layer = 0
+        while layer + 1 < len(nums1) + len(nums2) and len(result) < k:
 
-                if shift < len(nums1) and i-shift < len(nums2):
-                    candidates.append((nums1[shift], nums2[i-shift], nums1[shift]+nums2[i-shift]))
+            # Add new layer of candidates
+            for i in range(layer + 1):
+                if i < len(nums1) and layer-i < len(nums2):
+                    candidates.append((
+                        nums1[i], nums2[layer-i], # numbers
+                        nums1[i] + nums2[layer-i], # their sum
+                        layer)) # layer they are taken from
+            
+            #print(f"Layer {layer}, candidates: {candidates}")
 
-        candidates.sort(key=lambda x: x[2])
+            # Sort candidates
+            candidates.sort(key=lambda x: x[2])
 
-        return [candidate[:2] for candidate in candidates[:k]]
+            # Add candidates to the result, until you find one on the edge
+            # meaning p1 + p2 == layer
+            used_candidate = 0
+            for i, candidate in enumerate(candidates):
+                used_candidate += 1
+                result.append(candidate[:2])
+                if candidate[3] == layer or len(result) == k:
+                    break
+
+            # Trim candidates
+            candidates = candidates[used_candidate:]
+
+            # And expand to the next layer
+            layer += 1
+
+        return result
 
 def main():
     ''' Test kSmallestPairs
