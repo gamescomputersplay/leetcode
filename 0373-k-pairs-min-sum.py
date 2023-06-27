@@ -4,15 +4,17 @@
 class Solution:
     def kSmallestPairs(self, nums1, nums2, k):
 
+        len1, len2 = len(nums1), len(nums2)
+
         result = []
         candidates = []
 
         layer = 0
-        while layer + 1 < len(nums1) + len(nums2) and len(result) < k:
+        while layer + 1 < len1 + len2 and len(result) < k:
 
             # Add new layer of candidates
             for i in range(layer + 1):
-                if i < len(nums1) and layer-i < len(nums2):
+                if i < len1 and layer-i < len2:
                     candidates.append((
                         nums1[i], nums2[layer-i], # numbers
                         nums1[i] + nums2[layer-i], # their sum
