@@ -8,24 +8,24 @@ class bucketed_probability_stack:
     '''
     def __init__(self, bucket_n):
         self.bucket_n = bucket_n
-        self.queue = [[] for _ in range(bucket_n + 1)]
+        self.stacks = [[] for _ in range(bucket_n + 1)]
 
     def insert(self, value, priority):
         ''' Insert value with priority
         '''
-        self.queue[int(priority * self.bucket_n)].append(value)
+        self.stacks[int(priority * self.bucket_n)].append(value)
 
     def pop(self):
         ''' Pop value from highest priority bucket
         '''
-        for queue_part in self.queue[::-1]:
-            if queue_part:
-                return queue_part.pop()
+        for stack in self.stacks[::-1]:
+            if stack:
+                return stack.pop()
         return -1
 
     def __bool__(self):
-        for queue_part in self.queue[::-1]:
-            if queue_part:
+        for stack in self.stacks[::-1]:
+            if stack:
                 return True
         return False
 
@@ -50,13 +50,13 @@ class Solution:
         chances[start] = 1
 
         # Special Bucketed Stack to check the nodes
-        queue = bucketed_probability_stack(10)
-        queue.insert(start, 1)
+        stack = bucketed_probability_stack(10)
+        stack.insert(start, 1)
 
         # Traverse while stack has values
-        while queue:
+        while stack:
 
-            current_node = queue.pop()
+            current_node = stack.pop()
             current_prob = chances[current_node]
 
             for neighbour, probability in lookup[current_node]:
@@ -65,7 +65,7 @@ class Solution:
                 # add it to stack
                 if current_prob * probability > chances[neighbour]:
                     chances[neighbour] = current_prob * probability
-                    queue.insert(neighbour, chances[neighbour])
+                    stack.insert(neighbour, chances[neighbour])
 
         return chances[end]
 
