@@ -1,15 +1,47 @@
 ''' https://leetcode.com/problems/path-with-maximum-probability/
 '''
 
+class bucketed_probability_stack:
+    ''' Special stack that stores values according to their priorities
+    and pops values from higher priority buckets first.
+    Priorities are [0..1]
+    '''
+    def __init__(self, bucket_n):
+        self.bucket_n = bucket_n
+        self.queue = [[] for _ in range(bucket_n + 1)]
+
+    def insert(self, value, priority):
+        ''' Insert value with priority
+        '''
+        self.queue[int(priority * self.bucket_n)].append(value)
+
+    def pop(self):
+        ''' Pop value from highest priority bucket
+        '''
+        for queue_part in self.queue[::-1]:
+            if queue_part:
+                return queue_part.pop()
+        return -1
+
+    def __bool__(self):
+        for queue_part in self.queue[::-1]:
+            if queue_part:
+                return True
+        return False
+
 class Solution:
+    
     def maxProbability(self, n, edges, succProb, start, end):
 
         # Generate a lookup table like this:
-        # {from: {to1: prob1, to2: prob2}} etc
-        lookup = {i:{} for i in range(n)}
+        # [
+        # [(to1, prob1), (to2, prob2)]
+        # ...
+        # ]
+        lookup = [[] for _ in range(n)]
         for (node1, node2), prob in zip(edges, succProb):
-            lookup[node1][node2] = prob
-            lookup[node2][node1] = prob
+            lookup[node1].append((node2, prob))
+            lookup[node2].append((node1, prob))
 
         # Chance to get to the node
         # In the beiginning it is 100% for start
@@ -17,22 +49,23 @@ class Solution:
         chances = [0 for _ in range(n)]
         chances[start] = 1
 
-        # Stack to check the nodes
-        stack = [start]
+        # Special Bucketed Stack to check the nodes
+        queue = bucketed_probability_stack(10)
+        queue.insert(start, 1)
 
-        # Traverse while there are upudates
-        while stack:
+        # Traverse while stack has values
+        while queue:
 
-            current_node = stack.pop()
+            current_node = queue.pop()
             current_prob = chances[current_node]
 
-            for neighbour, probability in lookup[current_node].items():
+            for neighbour, probability in lookup[current_node]:
 
                 # If new node can be reached with higher probability,
                 # add it to stack
                 if current_prob * probability > chances[neighbour]:
                     chances[neighbour] = current_prob * probability
-                    stack.append(neighbour)
+                    queue.insert(neighbour, chances[neighbour])
 
         return chances[end]
 
@@ -44,6 +77,7 @@ def main():
     test_cases = [
         (3, [[0,1],[1,2],[0,2]], [0.5,0.5,0.2], 0, 2),
         (3, [[0,1],[1,2],[0,2]], [0.5,0.5,0.3], 0, 2),
+        (3, [[0,1],[1,2],[0,2]], [0.5,0.4,0.3], 0, 2),
         (3, [[0,1]], [0.5], 0, 2),
     ]
     for n, edges, succProb, start, end in test_cases:
