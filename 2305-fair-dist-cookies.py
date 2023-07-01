@@ -12,16 +12,16 @@ class Solution:
 
             nonlocal best_fairness
 
-            # Recursion end:
-            if n == len(cookies):
-                best_fairness = min(best_fairness, max(so_far))
-                return
-
             for pos, child in enumerate(so_far):
 
                 new_so_far = so_far.copy()
                 new_so_far[pos] += cookies[n]
-                recurse(new_so_far, n + 1)
+
+                # Recursion end:
+                if n == len(cookies) - 1:
+                    best_fairness = min(best_fairness, max(new_so_far))
+                else:
+                    recurse(new_so_far, n + 1)
 
                 # If it's child's first cookie, break
                 # We don't need to test several zeros
