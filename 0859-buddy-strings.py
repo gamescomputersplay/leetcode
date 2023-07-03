@@ -14,10 +14,7 @@ class Solution:
 
         # Same strings - NO if all characters present only once
         if s == goal:
-            for ch in set(s):
-                if s.count(ch) > 1:
-                    return True
-            return False
+            return len(list(s)) != len(set(s))
 
         # If there are exactly 2 mismatches - YES
         count_mismatches = 0
