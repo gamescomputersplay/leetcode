@@ -12,41 +12,36 @@ class Solution:
 
             # First bar, initiate the stack
             if stack == []:
-                stack.append((pos, height))
+                stack.append((height, pos))
                 continue
 
             # New bar is higher or equal
-            if height >= stack[-1][1]:
+            if height >= stack[-1][0]:
 
-                # Calculate possible areas
-                for p, h in stack[::-1]:
+                # Area is the left (lower) bar * distance + 1
+                for h, p in stack[::-1]:
                     max_area = max(max_area, h * (pos - p + 1))
-                # Consider the very first column - it can be expanded to 0
-                max_area = max(max_area, stack[0][1] * (pos + 1))
+                # The very first column in stack can for rectangle that goes to 0
+                max_area = max(max_area, stack[0][0] * (pos + 1))
 
-                # Add to stack if it is strict higher
-                if height > stack[-1][1]:
-                    stack.append((pos, height))
+                # If it is strictly higher, add to stack 
+                if height > stack[-1][0]:
+                    stack.append((height, pos))
 
+            # New bar is lower
             else:
                 # Remove all bars in stack that are higher or equal
-                while stack and stack[-1][1] >= height:
-                    stack.pop()
+                insert_position = pos
+                while stack and stack[-1][0] >= height:
+                    # Remember last removed bar
+                    insert_position = stack.pop()[1]
 
-                # Stack still has lower bars
-                if stack:
-                    # Calculate possible areas again
-                    for p, h in stack[::-1]:
-                        max_area = max(max_area, h * (pos - p + 1))
-                    max_area = max(max_area, stack[0][1] * (pos + 1))
+                # Place new bar in a stack, but record its position as a bar it just replaced
+                stack.append((height, insert_position))
 
-                # Stack is empty now
-                else:
-                    # Then this bar can still make a rect till the end
-                    max_area = max(max_area, height * (pos + 1))
-
-                # FInally, add to stack
-                stack.append((pos, height))
+                for h, p in stack[::-1]:
+                    max_area = max(max_area, h * (pos - p + 1))
+                max_area = max(max_area, stack[0][0] * (pos + 1))
 
         return max_area
 
@@ -82,7 +77,6 @@ def main():
         [2, 1, 5, 6, 2, 3],
         [2, 4],
         [7, 4, 8, 0, 8, 5],
-        [3, 0, 1, 3, 2],
         ]
 
     solution = Solution()
@@ -95,4 +89,4 @@ def main():
 if __name__ == "__main__":
     import random
     main()
-    #random_tests(100)
+    random_tests(10000)
