@@ -1,41 +1,34 @@
 ''' https://leetcode.com/problems/largest-rectangle-in-histogram/
 '''
 
+# I got stuck with this one and couldn't come up with a O(n) solution, only O(n^2)
+# See below which line was the one I couldn't come up with (that you should
+# check the position of the last remaining item in stack, not the one you
+# just popped. But use the leight you popped)
+
 class Solution:
+    
     def largestRectangleArea(self, heights):
 
         max_area = max(heights)
 
         stack = []
 
-        for pos, height in enumerate(heights):
+        for pos_right, height_right in enumerate(heights + [0]):
+            
+            while stack and height_right < stack[-1][0]:
+                height_left, _ = stack.pop()
 
-            # First bar, initiate the stack
-            if stack == []:
-                stack.append((height, pos))
-                continue
+                if stack:
+                    # This was the line I REALLLY strugge with
+                    # Only Chat GPT helped, dammit
+                    width = pos_right - stack[-1][1] - 1
+                else:
+                    width = pos_right
 
-            # If it is strictly higher, add to stack 
-            if height > stack[-1][0]:
-                stack.append((height, pos))
+                max_area = max(max_area, height_left * width)
 
-            # New bar is strictly lower
-            elif  height < stack[-1][0]:
-
-                # Remove all bars in stack that are higher or equal
-                insert_position = pos
-                while stack and stack[-1][0] >= height:
-                    # Remember last removed bar
-                    insert_position = stack.pop()[1]
-
-                # Place new bar in a stack, but record its position as a bar it just replaced
-                stack.append((height, insert_position))
-
-            # Area is the left (lower) bar * distance + 1
-            for h, p in stack[::-1]:
-                max_area = max(max_area, h * (pos - p + 1))
-            # The very first column in stack can for rectangle that goes to 0
-            max_area = max(max_area, stack[0][0] * (pos + 1))
+            stack.append((height_right, pos_right))
 
         return max_area
 
@@ -71,6 +64,7 @@ def main():
         [2, 1, 5, 6, 2, 3],
         [2, 4],
         [7, 4, 8, 0, 8, 5],
+        [3, 10, 6]
         ]
 
     solution = Solution()
