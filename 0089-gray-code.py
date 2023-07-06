@@ -10,11 +10,13 @@ class Solution:
 
         # Forward
         half = self.grayCode(n - 1)
+        
         # And backward with 1 in from
         first_digit = 2 ** (n-1) 
-        second_half = [first_digit + x for x in half[::-1]]
+        half.extend([first_digit + x for x in half[::-1]])
 
-        return half + second_half
+        return half
+
 
 def main():
     ''' Test grayCode
