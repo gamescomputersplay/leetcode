@@ -5,6 +5,7 @@ class Solution:
     def maxConsecutiveAnswers(self, answerKey, k):
 
         max_conseq = 1
+        strlen = len(answerKey)
 
         # Do it twice, second time reversing the T and F
         for F, T in (("F", "T"), ("T", "F")):
@@ -16,20 +17,18 @@ class Solution:
             while True:
 
                 # Done if have reached the end of the string
-                if end == len(answerKey):
+                if end == strlen:
                     break
 
                 # Keep growing the window while we can (next is "T")
                 if answerKey[end] == T:
                     end += 1
-                    max_conseq = max(max_conseq, end - start)
 
                 # We found an "F"
                 # But we can still change it
                 elif made_switches < k:
                     end += 1
                     made_switches += 1
-                    max_conseq = max(max_conseq, end - start)
 
                 # We can't switch anymore, need to pull the start first
                 else:
@@ -37,10 +36,13 @@ class Solution:
                     while answerKey[start] != F:
                         start += 1
 
-                    # Than start moves to the right
+                    # Than we can move both start and end, this way
+                    # keeping the number of made_switches the same
                     start += 1
                     end += 1
-                    max_conseq = max(max_conseq, end - start)
+
+                # Keep track of the longest window
+                max_conseq = max(max_conseq, end - start)
 
         return max_conseq
 
