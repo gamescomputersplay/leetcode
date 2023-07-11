@@ -93,6 +93,24 @@ def level_order_2_tree(array):
 
     return node_queue[0]
 
+def find_target_node(root, target_value):
+    ''' Return node of a tree which value matches target_val
+    '''
+    def recursive(node):
+        if node is None:
+            return None
+        if node.val == target_value:
+            return node
+
+        left_result = recursive(node.left)
+        if left_result is not None:
+            return left_result
+
+        right_result = recursive(node.right)
+        return right_result
+
+    return recursive(root)
+
 
 if __name__ == "__main__":
     print("This library is a definition and some helpers to work with binary trees")
