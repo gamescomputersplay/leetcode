@@ -1,80 +1,51 @@
 ''' https://leetcode.com/problems/find-eventual-safe-states/
 '''
 
-class UniqueQueue:
-
-    def __init__(self, values=[]):
-        self.queue = values.copy()
-        self.queue_set = set(self.queue)
-        self.pointer = 0
-
-    def add(self, values):
-        for value in values:
-            if value not in self.queue_set:
-                self.queue.append(value)
-                self.queue_set.add(value)
-
-    def read(self):
-        if self.pointer >= len(self.queue):
-            return None
-        self.pointer += 1
-        return self.queue[self.pointer-1]
-    
-    def empty(self):
-        if self.pointer == len(self.queue):
-            return True
-        return False
-
 class Solution:
     def eventualSafeNodes(self, graph):
 
+        # Transform info list of sets
+        graph = [set(node) for node in graph]
+        #print(graph)
+
         # Terminal nodes are safe
         safe = set(i for i, node in enumerate(graph) if not node)
-        unsafe = set()
+        #print("safe", safe)
 
-        # Test other nodes
-        for i, next_nodes in enumerate(graph):
-            #print(i, next_nodes)
-            # This node has been tested already
-            if i in safe:
-                continue
+        # Dict of nodes pointing to this node
+        point_here = {}
+        for from_node, to_nodes in enumerate(graph):
+            for to_node in to_nodes:
+                if to_node not in point_here:
+                    point_here[to_node] = set()
+                point_here[to_node].add(from_node)
+        #print(point_here)
 
-            # Stack to check paths from this node
-            queue = UniqueQueue(next_nodes)
+        # Flag to keep going as long as there are updates to list of safe
+        keep_going = True
+        while keep_going:
+            keep_going = False
 
-            # Nodes that have been looked at
-            processed = {i}
+            # Put newly found safe nodes here
+            new_safe = set()
 
-            while True:
+            # Find all the nodes that poiunt to current safe nodes
+            for safe_node in safe:
+                if safe_node in point_here:
+                    to_delete = []
+                    for points_to_safe in point_here[safe_node]:
 
-                node = queue.read()
+                        # If node points ONLY to safe nodes - it is safe
+                        if graph[points_to_safe].issubset(safe):
+                            new_safe.add(points_to_safe)
+                            to_delete.append(points_to_safe)
+                            keep_going = True
 
-                processed.add(node)
-                #print("-", node, processed)
+                    # Remove nodes that are safe
+                    for item in to_delete:
+                        point_here[safe_node].remove(item)
 
-                # Path lead to an unsafe node
-                if node in unsafe:
-                    # This node is unsafe
-                    unsafe.add(i)
-                    break
-
-                # Next nodes contain those we already processed - a cycle
-                found_unsafe = False
-                for next_node in graph[node]:
-                    if next_node in processed and next_node not in safe:
-                        unsafe.add(i)
-                        found_unsafe = True
-                        break
-                    queue.add([next_node])
-                if found_unsafe:
-                    break
-
-                # If queue is empty
-                if queue.empty():
-
-                    # Than all nodes we saw on the way are safe
-                    safe.update(processed)
-                    break
+            safe.update(new_safe)
 
         return sorted(list(safe))
 
