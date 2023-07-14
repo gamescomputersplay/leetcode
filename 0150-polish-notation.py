@@ -10,23 +10,22 @@ class Solution:
 
         for token in tokens:
 
-            if token == "+":
+            if token in ("+", "-", "*", "/"):
                 num = stack.pop()
-                stack[-1] += num
-                
-            elif token == "-":
-                num = stack.pop()
-                stack[-1] -= num
 
-            elif token == "*":
-                num = stack.pop()
-                stack[-1] *= num
+                if token == "+":
+                    stack[-1] += num
 
-            elif token == "/":
-                num = stack.pop()
-                stack[-1] = math.floor(stack[-1] / num) \
-                            if stack[-1] / num > 0 \
-                            else math.ceil(stack[-1]/ num)
+                elif token == "-":
+                    stack[-1] -= num
+
+                elif token == "*":
+                    stack[-1] *= num
+
+                elif token == "/":
+                    stack[-1] = math.floor(stack[-1] / num) \
+                                if stack[-1] / num > 0 \
+                                else math.ceil(stack[-1]/ num)
             else:
                 stack.append(int(token))
 
