@@ -4,67 +4,32 @@
 class Solution:
     def threeSum(self, nums):
 
-        # List of answer
-        answers = set()
+        solution = set()
+        nums.sort()
 
-        # Dict to quickly look up position (and existence) by number
-        lookup = {num: position for position, num in enumerate(nums)}
+        lookup = {}
+        for num in nums[1:]:
+            lookup[num] = lookup.get(num, 0) + 1
 
-        # Go through all pairs
-        for position_1, num_1 in enumerate(nums):
-            for position_2, num_2 in enumerate(nums[:position_1]):        
+        for i, num1 in enumerate(nums[1:-1], start=1):
+            lookup[num1] -= 1
+            for num2 in nums[:i]:
 
-                # And lookup if the difference is in the array, using dict
-                if - num_1 - num_2 in lookup and \
-                   lookup[- num_1 - num_2] != position_1 and \
-                   lookup[- num_1 - num_2] != position_2:
+                if -num1-num2 in lookup and lookup[-num1-num2] > 0:
+                    solution.add((num2, num1, -num2-num1))
 
-                    # This is to deduplicate  answers
-                    answer = [num_1, num_2, - num_1 - num_2]
-                    answer.sort()
-                    answers.add(tuple(answer))
+        return [list(item) for item in sorted(solution)]
 
-        return [list(answer) for answer in answers]
+    def threeSum_brute(self, nums):
+        solution = set()
+        for i, num1 in enumerate(nums):
+            for j, num2 in enumerate(nums):
+                for k, num3 in enumerate(nums):
+                    if i != j and j != k and k != i and \
+                       num1 + num2 + num3 == 0:
+                        solution.add(tuple(sorted([num1, num2, num3])))
+        return [list(item) for item in sorted(solution)]
 
-    def threeSumSlow(self, nums):
-        ''' First version, failed by time
-        '''
-        
-        # Dict of all option of lacking to 0 for all pairs of numbers:
-        # {[how much lack to 0: ((positions), (values)) ... ]}
-        lack = {}
-
-        # Answers (use set to deduplicate)
-        answers = set()
-
-        # Go through all pairs and populate "lack"
-        for position_1, num_1 in enumerate(nums):
-            for position_2, num_2 in enumerate(nums[:position_1]):
-
-                if - num_1 - num_2 not in lack:
-                    lack[- num_1 - num_2] = []
-                lack[- num_1 - num_2].append([position_1, position_2])
-
-        for position, num in enumerate(nums):
-
-            # If number is in "lack" - we have an answer
-            if num in lack:
-                for lack_option in lack[num]:
-                    if position not in lack_option:
-
-                        answer = lack_option.copy()
-                        answer.append(position)
-                        answer.sort()
-                        answers.add(tuple(answer))
-
-        # Transform into the right format
-        answers_values = set()
-        for answer in answers:
-            answer_values = [nums[pos] for pos in answer]
-            answer_values.sort()
-            answers_values.add(tuple(answer_values))
-
-        return [list(answer) for answer in answers_values]
 
 def main():
     ''' Test threeSum
@@ -72,16 +37,32 @@ def main():
     solution = Solution()
 
     test_cases = [
-        [1, 2, 4, 6, 12, 10, -3, -22, -11, -3, -5],
-        [-1, 0, 1, 2, -1, -4], # [[-1,-1,2],[-1,0,1]]
-        [0, 1, 1], # []
-        [0, 0, 0], # [[0,0,0]]
-        [3, 0, -2, -1, 1, 2], # [[-2,-1,3],[-2,0,2],[-1,0,1]]
+        [-1,0,1,2,-1,-4],
+        [0,1,1],
+        [0,0,0],
     ]
     for nums in test_cases:
         result = solution.threeSum(nums)
-        print(nums, result)
+        result_brute = solution.threeSum_brute(nums)
+        print(nums, result_brute, result)
 
+def random_test(runs=100):
+    ''' Run random test, check correctness with bruteforce
+    '''
+    solution = Solution()
+
+    for _ in range(runs):
+        nums = [random.randint(-5, 5) for _ in range(random.randint(3, 10))]
+        result = solution.threeSum(nums)
+        result_brute = solution.threeSum_brute(nums)
+        if result_brute != result:
+            print(f"Error on: {nums}")
+            print(f"Result: {result}")
+            print(f"Brute result: {result_brute}")
+            return
+    print(f"{runs} random tests okay")
+    return
+            
 def large_case(case_size):
     ''' Time the large case
     '''
@@ -104,4 +85,5 @@ if __name__ == "__main__":
     import random
     import time
     main()
+    random_test(10000)
     test_timing(13)
