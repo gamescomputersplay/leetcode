@@ -18,7 +18,7 @@ class Solution:
                 if -num1-num2 in lookup and lookup[-num1-num2] > 0:
                     solution.add((num2, num1, -num2-num1))
 
-        return [list(item) for item in sorted(solution)]
+        return list(solution)
 
     def threeSum_brute(self, nums):
         solution = set()
@@ -54,6 +54,7 @@ def random_test(runs=100):
     for _ in range(runs):
         nums = [random.randint(-5, 5) for _ in range(random.randint(3, 10))]
         result = solution.threeSum(nums)
+        result = [list(item) for item in sorted(result)]
         result_brute = solution.threeSum_brute(nums)
         if result_brute != result:
             print(f"Error on: {nums}")
