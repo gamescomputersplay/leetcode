@@ -15,18 +15,16 @@ class Solution:
             # Flying left - fight it out with stack
             while result and result[-1] > 0:
 
+                to_fight = result[-1]
                 # Different outcomes
                 # break means negative asteroid exploded
                 # pop means positive asteroid destoid
-                if abs(asteroid) > result[-1]:
+                if abs(asteroid) >= to_fight:
                     result.pop()
-                elif abs(asteroid) == result[-1]:
-                    result.pop()
-                    break
-                elif abs(asteroid) < result[-1]:
+                if abs(asteroid) <= to_fight:
                     break
 
-            # If negative was not destoed (no breaks), add it to the stack
+            # If negative was not destroed (no breaks), add it to the stack
             else:
                 result.append(asteroid)
 
