@@ -9,10 +9,10 @@ class Solution:
 
         def save_range(new_range):
             nonlocal longest_seq
-            for i in range(2):
-                if new_range[i] not in edges:
-                    edges[new_range[i]] = []
-                edges[new_range[i]].append(new_range)
+            for range_edge in new_range:
+                if range_edge not in edges:
+                    edges[range_edge] = []
+                edges[range_edge].append(new_range)
             longest_seq = max(longest_seq, new_range[1] - new_range[0] - 1)
 
         def pop_range(num):
