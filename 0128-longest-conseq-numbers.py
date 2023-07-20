@@ -7,23 +7,20 @@ class Solution:
         # Deduplicate nums
         nums = list(set(nums))
 
-        def save_range(new_range):
+        def save_range(beg, end):
             nonlocal longest_seq
-            for range_edge in new_range:
-                if range_edge not in edges:
-                    edges[range_edge] = []
-                edges[range_edge].append(new_range)
-            longest_seq = max(longest_seq, new_range[1] - new_range[0] - 1)
+            for key, val in [(beg, end), (end, beg)]:
+                if key not in edges:
+                    edges[key] = []
+                edges[key].append(val)
+            longest_seq = max(longest_seq, end - beg - 1)
 
-        def pop_range(num):
-            range_to_pop = edges[num][-1]
-            egde_left, edge_right = range_to_pop
+        def pop_range(key):
+            val = edges[key].pop()
+            # Remove the other edge
+            edges[val].remove(key)
 
-            # Remove this range from both edges
-            for edge_to_delete in egde_left, edge_right:
-                edges[edge_to_delete].remove(range_to_pop)
-
-            return range_to_pop
+            return min(key, val), max(key, val)
 
         longest_seq = 0
 
@@ -35,33 +32,28 @@ class Solution:
 
             # This number is all alone now, not merging to any range
             if num not in edges:
-                new_range = [num - 1, num + 1]
-                save_range(new_range)
+                save_range(num - 1, num + 1)
 
             # This number can extend one range
             elif num in edges and len(edges[num]) == 1:
 
-                range_to_extend = pop_range(num)
+                beg, end = pop_range(num)
 
                 # Update the range edges
-                if num == range_to_extend[0]:
-                    range_to_extend[0] = num - 1
-                if num == range_to_extend[1]:
-                    range_to_extend[1] = num + 1
+                if num == beg:
+                    beg = num - 1
+                if num == end:
+                    end = num + 1
 
-                # Save the range
-                save_range(range_to_extend)
+                save_range(beg, end)
 
             # This number merges 2 ranges
             elif num in edges and len(edges[num]) == 2:
 
-                combined = pop_range(num)
-                combined.extend(pop_range(num))
+                a, b = pop_range(num)
+                c, d = pop_range(num)
 
-                combined_range = [min(combined), max(combined)]
-
-                # Save the range
-                save_range(combined_range)
+                save_range(min(a, b, c, d), max(a, b, c, d))
 
         return longest_seq
 
