@@ -5,26 +5,25 @@ from classes import binarytree
 from classes.binarytree import TreeNode
 
 class Solution:
-    def copy(self, node):
-        ''' Copy a BST
-        '''
-        if node is None:
-            return None
-        node_copy = TreeNode(0)
-        node_copy.left = self.copy(node.left)
-        node_copy.right = self.copy(node.right)
-        return node_copy
+
+    def __init__(self):
+        self.cache = {}
 
     def allPossibleFBT(self, n):
 
+        if n in self.cache:
+            return self.cache[n]
+
         # Cases where only 1 option is possible
         if n == 1:
-            return [TreeNode(0)]
+            self.cache[n] =[TreeNode(0)]
+            return self.cache[n]
         if n == 3:
             node = TreeNode(0)
             node.left = TreeNode(0)
             node.right = TreeNode(0)
-            return [node]
+            self.cache[n] = [node]
+            return self.cache[n]
 
         # If n == 5+, go through ways to distribute
         # those pairs of nodes among 2 children nodes
@@ -40,10 +39,11 @@ class Solution:
                 for right_option in right_options:
 
                     node = TreeNode(0)
-                    node.left = self.copy(left_option)
-                    node.right = self.copy(right_option)
+                    node.left = left_option
+                    node.right = right_option
                     result.append(node)
 
+        self.cache[n] = result
         return result
 
 def main():
