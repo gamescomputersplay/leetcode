@@ -6,15 +6,44 @@ import math
 class Solution:
     def minSpeedOnTime(self, dist, hour):
 
+        def find_fist_more_than_num(arr, num):
+
+            if arr==[]:
+                return 0
+
+            if arr[-1] < num:
+                return len(arr)
+            
+            if arr[0] >= num:
+                return 0
+
+            left = 0
+            right = len(arr)
+            while True:
+                center = (left + right) // 2
+
+                if arr[center] >= num > arr[center-1] or center == 0:
+                    return center
+                if arr[center] >= num:
+                    right = center
+                else:
+                    left = center
+
         def doable(speed):
             ''' Whether teh task is doable of teh speed is "speed"
             '''
             nonlocal cache
             if speed in cache:
                 return cache[speed]
-            used_time = 0
-            for s in dist[:-1]:
-                used_time += math.ceil(s / speed)
+            
+            one_hours = find_fist_more_than_num(dist[:-1], speed)
+            used_time = one_hours
+
+            for s in dist[one_hours:-1]:
+                if speed > s:
+                    used_time += 1
+                else:
+                    used_time += math.ceil(s / speed)
             used_time += dist[-1] / speed
             cache[speed] = used_time <= hour
             return cache[speed]
@@ -34,6 +63,7 @@ class Solution:
             right = max(right, int(dist[-1]/(hour-int(hour)))+2)
 
         cache = {}
+        dist = sorted(dist[:-1]) + [dist[-1]]
 
         while True:
             center = (left + right) // 2
@@ -68,6 +98,14 @@ def random_test(runs=100):
                 return
     print(f"{runs} tests okay")
 
+def large_case(size=1000):
+    solution = Solution()
+    dist = [x for x in range(1, size)]
+    hour = size*2
+    start = time.time()
+    solution.minSpeedOnTime(dist, hour)
+    elapsed = time.time() - start
+    print(f"Large case: {elapsed}s")
 
 def main():
     ''' Test minSpeedOnTime
@@ -87,5 +125,7 @@ def main():
 
 if __name__ == "__main__":
     import random
+    import time
     main()
     random_test(10000)
+    large_case(1_000_000)
