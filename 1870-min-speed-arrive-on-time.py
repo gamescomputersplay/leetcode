@@ -9,11 +9,15 @@ class Solution:
         def doable(speed):
             ''' Whether teh task is doable of teh speed is "speed"
             '''
+            nonlocal cache
+            if speed in cache:
+                return cache[speed]
             used_time = 0
             for s in dist[:-1]:
                 used_time += math.ceil(s / speed)
             used_time += dist[-1] / speed
-            return used_time <= hour
+            cache[speed] = used_time <= hour
+            return cache[speed]
 
         # Impossible since each one but one takes at least an hour
         if len(dist) - 1 >= hour:
@@ -28,6 +32,8 @@ class Solution:
         # When we need to try to squeeze last one into 1 hour
         if hour != int(hour):
             right = max(right, int(dist[-1]/(hour-int(hour)))+2)
+
+        cache = {}
 
         while True:
             center = (left + right) // 2
