@@ -4,7 +4,63 @@
 class Solution:
 
     def maxArea(self, height):
+        ''' Another attempt at the problem.
+        '''
+
+        def find_best_wall(arr, val):
+            ''' Find first value that is equal or higher
+            '''
+            left = 0
+            right = len(arr)
+
+            while True:
+                center = (left + right) // 2
+                if center == 0:
+                    return arr[0]
+                if left == len(arr) - 1:
+                    return arr[len(arr) - 1]
+                if arr[center][0] >= val > arr[center-1][0]:
+                    return arr[center]
+                if arr[center][0] < val:
+                    left = center
+                else:
+                    right = center
+  
+        # Stack of walls, each one higher that the previous one,
+        # with their positions: [(height, position), ...]
+        left_walls = []
+
+        # Go through the walls
+        for position, wall in enumerate(height):
+
+            # Populate the stack (only add the wall
+            # that is higher than the last in stack)
+            if (not left_walls or wall > left_walls[-1][0]) and wall > 0:
+                left_walls.append((wall, position))
+
+        # Same for the right walls
+        right_walls = []
+        for position, wall in enumerate(height[::-1]):
+            if (not right_walls or wall > right_walls[-1][0]) and wall > 0:
+                right_walls.append((wall, len(height) - position - 1))
+
+        max_water = 0
+        for one_side, other_side in [(left_walls, right_walls), (right_walls, left_walls)]:
+            for one_wall in one_side:
+
+                # in the right wall stack,
+                # find first from the right that is equal of higher
+
+                other_wall = find_best_wall(other_side, one_wall[0])
+                water = abs(other_wall[1] - one_wall[1]) * min(other_wall[0], one_wall[0])
+                max_water = max(max_water, water)
+
+        return max_water
+
+
+    def maxArea_bestMemory(self, height):
         ''' Return the max volume of water
+        Firt accepted attempt. Bad timing, great memory
         '''
 
         # Stack of walls, each one higher that the previous one,
@@ -28,7 +84,7 @@ class Solution:
         max_water = 0
 
         for left_wall, left_position in left_walls:
-            
+
             half_mark = len(right_walls) // 2
 
             # Minimal distance (for pruning)
@@ -63,102 +119,6 @@ class Solution:
                 if water > max_water:
                     max_water = water
                     min_height = max_water / (len(height) - left_position)
-
-        return max_water
-
-
-    def maxAreaFailed(self, height):
-        ''' Return the max volume of water
-        '''
-
-        def measure_water(left_wall, right_wall):
-            return min(left_wall[0], right_wall[0]) * (right_wall[1] - left_wall[1])
-
-        # Stack of walls, each one higher that the previous one,
-        # with their positions: [(height, position), ...]
-        rising_walls = []
-
-        max_water = float("-inf")
-
-        # Go through the walls
-        for position, wall in enumerate(height):
-
-            # Find the max volume of water between "wall" and any
-            # of the walls in the stack
-            right_wall = (wall, position)
-            print(rising_walls, right_wall)
-
-            # If there are few elements, simply go through them
-            if len(rising_walls) < 3:
-                for left_wall in rising_walls:
-                    water = measure_water(left_wall, right_wall)
-                    max_water = max(max_water, water)
-            # Otherwise, let's use binary  search
-            else:
-                left = 0
-                right = len(rising_walls) - 1
-                middle = (left + right) // 2
-
-                while True:
-
-                    print(left, middle, right)
-                    step_left = -1 if middle == 0 else measure_water(rising_walls[middle - 1], right_wall)
-                    step_right = -1 if middle == len(rising_walls) - 1 else measure_water(rising_walls[middle + 1], right_wall)
-                    middle_water = measure_water(rising_walls[middle], right_wall)
-                    print(step_left, middle_water, step_right)
-                    if right - left < 2:
-                        water = max(step_left, middle_water, step_right)
-                        break
-                    if step_left < middle_water and step_right < middle_water:
-                        water = middle_water
-                        break
-
-                    if step_left < step_right:
-                        left = middle
-                    else:
-                        right = middle
-                    middle = (left + right) // 2
-
-                max_water = max(max_water, water)
-                print(max_water)
-
-            # Populate the stack (only add the wall
-            # that is higher than the last in stack)
-            if not rising_walls or wall > rising_walls[-1][0]:
-                rising_walls.append((wall, position))
-
-        return max_water
-
-    def maxAreaSlow(self, height):
-        ''' Return the max volume of water
-        '''
-
-        # Stack of walls, each one higher that the previous one,
-        # with their positions: [(height, position), ...]
-        rising_walls = []
-
-        max_water = float("-inf")
-
-        # Go through the walls
-        for position, wall in enumerate(height):
-
-            # Find the most water volume between current wall
-            # and the walls in the stack
-            for left_wall_height, left_wall_position in rising_walls:
-
-                water = min(left_wall_height, wall) * \
-                    (position - left_wall_position)
-                max_water = max(max_water, water)
-
-                # If left wall is higher than current wall, no need
-                # to check the rest they will be smaller
-                if left_wall_height > wall:
-                    break
-
-            # Populate the stack (only add the wall
-            # that is higher than the last in stack)
-            if not rising_walls or wall > rising_walls[-1][0]:
-                rising_walls.append((wall, position))
 
         return max_water
 
@@ -242,7 +202,8 @@ def test_large_case():
 if __name__ == "__main__":
     import random
     import time
-    #test_one_case()
-    #main()
-    #test_random_case()
+    test_one_case()
+    main()
+    test_random_case()
     test_large_case()
+
