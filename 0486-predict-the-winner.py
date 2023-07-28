@@ -23,13 +23,17 @@ class Solution:
                 new_score = score.copy()
                 new_score[whos_turn] += num
                 new_whos_turn = 1 if whos_turn == 0 else 0
-                outcome.append(minimax(new_remaining_nums, new_score, new_whos_turn))
 
-            # Player 0 choose True if he can
-            if whos_turn == 0:
-                cache[cache_key] = outcome[0] or outcome[1]
-                return cache[cache_key]
-            # Player 1 choose False if he can
+                result = minimax(new_remaining_nums, new_score, new_whos_turn)
+
+                # Player 0 needs just 1 victory of player 0
+                if whos_turn == 0 and result:
+                    cache[cache_key] = True
+                    return True
+
+                outcome.append(result)
+
+            # Player 1 needs only 1 loss of player 0
             cache[cache_key] = outcome[0] and outcome[1]
             return cache[cache_key]
 
