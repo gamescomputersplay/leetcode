@@ -1,7 +1,5 @@
-''' https://leetcode.com/problems/binary-tree-level-order-traversal-ii/
+''' https://leetcode.com/problems/binary-tree-preorder-traversal/
 '''
-
-# Can I just do regular traversal (as in #102) and reverse the result?
 
 from classes import binarytree
 from classes.binarytree import TreeNode
