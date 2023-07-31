@@ -22,15 +22,13 @@ class Solution:
 
                 # If they match the piece of s from start, then
                 # new word can start from start + len(word)
-
                 if s[position:].startswith(word):
-                    all_words_so_far = end_here[position]
 
                     # Take all teh combinations we had so far
-                    for words_so_far in all_words_so_far:
+                    for words_so_far in end_here[position]:
 
                         # Add possible new matching words to those we had so far
-                        end_here[position + len(word)].append(words_so_far + separator + word)
+                        end_here[position + len(word)].append(f"{words_so_far}{separator}{word}")
 
             separator = " "
 
