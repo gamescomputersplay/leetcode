@@ -7,6 +7,7 @@ class Solution:
         # List of possible words that end here
         end_here = [[""]] + [[] for _ in range(len(s))]
 
+        # Separator is "" during the first run and " " on all subsequent runs
         separator = ""
 
         # Go through all the positions in s
