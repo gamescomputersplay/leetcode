@@ -23,8 +23,6 @@ class Solution:
 
         # Words we just reach (use to look for the next step)
         just_reached = set([beginWord])
-        # Seen words (can ignore)
-        seen = set([beginWord])
 
         # count steps
         steps = 1
@@ -41,11 +39,7 @@ class Solution:
             for word in just_reached:
 
                 # And see if we can move to the next one
-                for potential_reach in wordList:
-
-                    # No need to check if we alreacy reached this word
-                    if potential_reach in seen:
-                        continue
+                for potential_reach in wordlist_set:
 
                     if one_letter_away(word, potential_reach):
                         new_reached.add(potential_reach)
@@ -55,8 +49,8 @@ class Solution:
             if len(new_reached) == 0:
                 return 0
 
+            wordlist_set = wordlist_set.difference(new_reached)
             just_reached = new_reached
-            seen.update(just_reached)
 
 
 def main():
