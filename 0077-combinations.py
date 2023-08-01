@@ -1,8 +1,34 @@
 ''' https://leetcode.com/problems/combinations/
 '''
 
+import math
 class Solution:
     def combine(self, n, k):
+
+        # Fist combination is [1, 2, 3, ...]
+        combs = [[i for i in range(1, k + 1)]]
+
+        # This is how many more combinations we need to add
+        comb_count = math.factorial(n) // (math.factorial(k) * math.factorial(n-k))
+
+        for _ in range(comb_count - 1):
+            # Start with the previous combination
+            comb = combs[-1].copy()
+
+            # Find first position from the right, that can be increased by 1
+            # In such a way that all position to the right of it, are +1, +1, +1
+            for pos_back in range(k-1, -1, -1):
+                if comb[pos_back] < n + pos_back + 1 - k:
+                    comb[pos_back] += 1
+                    for pos_forward in range(pos_back + 1, k):
+                        comb[pos_forward] = comb[pos_forward - 1] + 1 
+                    break
+
+            combs.append(comb)
+
+        return combs
+
+    def combine_prev(self, n, k):
 
         # Start with [[1], [2], [3],...]
         combs = [[i] for i in range(1, n + 1)]
