@@ -4,20 +4,25 @@
 class Solution:
     def combine(self, n, k):
 
-        def add_element(sofar):
+        # Start with [[1], [2], [3],...]
+        combs = [[i] for i in range(1, n + 1)]
 
-            for i in range(1 if not sofar else max(sofar) + 1, n + 1):
+        # Then add numbers uup to k
+        for _ in range(k - 1):
 
-                new_sofar = sofar.copy()
-                new_sofar.append(i)
-                if len(new_sofar) == k:
-                    result.append(new_sofar)
-                else:
-                    add_element(new_sofar)
+            new_combs = []
 
-        result = []
-        add_element([])
-        return result
+            # Take whatever you have so far
+            for comb in combs:
+
+                # And add all numbers larger than the last one
+                for i in range(comb[-1] + 1, n + 1):
+                    new_combs.append(comb + [i])
+
+            combs = new_combs
+
+        return combs
+
 
 def main():
     ''' Test combine
