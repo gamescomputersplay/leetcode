@@ -17,12 +17,26 @@ class Solution:
 
         # Set for faster lookup
         wordlist_set = set(wordList)
-        # In this case ladder is impossible
+
+        # Final word not in the list: impossible
         if endWord not in wordlist_set:
             return 0
+        
+        # with 1 letter words it is 2
+        if len(beginWord) == 1:
+            return 2
 
         # Words we just reach (use to look for the next step)
         just_reached = set([beginWord])
+        # Seen words (can ignore)
+        seen = set([beginWord])
+
+        # Subsets by first and last letters
+        first = {ch:[] for ch in "abcdefghijklmnopqrstuvwxyz"}
+        last = {ch:[] for ch in "abcdefghijklmnopqrstuvwxyz"}
+        for word in wordList:
+            first[word[0]].append(word)
+            last[word[-1]].append(word)
 
         # count steps
         steps = 1
@@ -39,7 +53,11 @@ class Solution:
             for word in just_reached:
 
                 # And see if we can move to the next one
-                for potential_reach in wordlist_set:
+                for potential_reach in first[word[0]] + last[word[-1]]:
+
+                    # No need to check if we alreacy reached this word
+                    if potential_reach in seen:
+                        continue
 
                     if one_letter_away(word, potential_reach):
                         new_reached.add(potential_reach)
@@ -49,8 +67,8 @@ class Solution:
             if len(new_reached) == 0:
                 return 0
 
-            wordlist_set = wordlist_set.difference(new_reached)
             just_reached = new_reached
+            seen.update(just_reached)
 
 
 def main():
