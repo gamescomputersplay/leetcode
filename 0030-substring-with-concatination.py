@@ -7,34 +7,33 @@ class Solution:
         result = []
 
         word_len = len(words[0])
-        total_wordlen = word_len * len(words)
 
         words_counts = {}
         for word in words:
             words_counts[word] = words_counts.get(word, 0) + 1
 
-        # Go through all starting positions
-        for start in range(len(s) - total_wordlen + 1):
+        # We start the window at all the position between 0 and word_len
+        for window_start in range(word_len):
 
-            # Break string into words from this position
             found = {}
             for chunk_n in range(len(words)):
+                chunk = s[window_start + chunk_n * word_len:window_start + (chunk_n + 1) * word_len]
+                found[chunk] = found.get(chunk, 0) + 1
 
-                chunk = s[start + chunk_n * word_len:start + (chunk_n + 1) * word_len]
+            if words_counts == found:
+                result.append(window_start)
 
-                # Now compare the chunks with the words (and counts) we have
-                if chunk in words_counts:
-                    found[chunk] = found.get(chunk, 0) + 1
-                    # It needs more chunks that we have - does not fit
-                    if found[chunk] > words_counts[chunk]:
-                        break
-                # If needs the chunk we dont have - does not fit
-                else:
-                    break
+            for i in range((len(s) - window_start )// word_len - len(words)):
+                outgoing = s[window_start + i * word_len:window_start + (i + 1) * word_len]
+                incoming = s[window_start + (i + len(words)) * word_len:window_start + (i + len(words) + 1) * word_len]
 
-            # No mismatches - this start position fits
-            else:
-                result.append(start)
+                found[outgoing] -= 1
+                if found[outgoing] == 0:
+                    del found[outgoing]
+                found[incoming] = found.get(incoming, 0) + 1
+
+                if words_counts == found:
+                    result.append(window_start + (i + 1) * word_len)
 
         return result
 
