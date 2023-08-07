@@ -14,21 +14,20 @@ class Solution:
 
         if target in (flat_addr(left), flat_addr(right)):
             return True
-        
+
         while True:
 
             center = (left + right) // 2
-
-            if flat_addr(center) == target:
+            center_value = flat_addr(center)
+            if center_value == target:
                 return True
             if right - left <= 1:
                 return False
-            
-            if flat_addr(center) > target:
+
+            if center_value > target:
                 right = center
             else:
                 left = center
-
 
 def main():
     ''' Test searchMatrix
