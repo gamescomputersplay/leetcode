@@ -6,87 +6,47 @@
 
 class Solution:
 
-    def __init__(self):
-        self.cache = {}
-
-    def combination_rec(self, candidates, target, start):
-
-        if (target, start) in self.cache:
-            return self.cache[(target, start)]
-
-        if target == 0:
-            self.cache[(target, start)] = [[]]
-            return [[]]
-
-        out = set()
-
-        for new_start in range(start, len(candidates)):
-
-            candidate = candidates[new_start]
-            new_target = target - candidate
-
-            if new_target >= 0:
-                results = self.combination_rec(candidates, new_target, new_start + 1)
-                for result in results:
-                    out.add(tuple([candidate] + list(result)))
-                    
-        self.cache[(target, start)] = out
-        return out
-
     def combinationSum2(self, candidates, target):
 
+        def combination_rec(target, start_from):
+
+            if (target, start_from) in cache:
+                return cache[(target, start_from)]
+
+            all_options = set()
+
+            # Continue the recursion
+            for position, element in enumerate(candidates[start_from:], start=start_from):
+
+                # How can we get remaining value from remaining elements
+                new_target = target-element
+
+                if new_target < 0:
+                    continue
+
+                if new_target == 0:
+                    all_options.add((element,))
+                else:
+                    this_element_options = combination_rec(target-element, position + 1)
+                    # Combine it with all next options
+                    for option in this_element_options:
+                        if option is not None:
+                            all_options.add(tuple([element] + list(option)))
+
+            cache[(target, start_from)] = all_options
+            return all_options
+
         # Sort the candidates
-        candidates.sort(reverse=False)
+        candidates.sort(reverse=True)
 
-        start = 0
-        out = self.combination_rec(candidates, target, start)
-        # Convert to lists
-        out = [list(item) for item in out]
-        return out
+        # Keep track of combinations we looked at
+        cache = {}
 
-    #### Below is the old solution
+        # Start the recursion
+        result = combination_rec(target, 0)
 
-    def __init__(self):
-        self.cache = {}
+        return list(result)
 
-    def combinationSum_recursive(self, candidates, target):
-
-        cache_index = tuple(candidates + [target])
-
-        if cache_index in self.cache:
-            return self.cache[cache_index]
-
-        if target == 0:
-            self.cache[cache_index] = [[]]
-            return [[]]
-
-        out = set()
-        
-        for candidate in candidates:
-
-            # These two are new lines
-            new_candidates = candidates.copy()
-            new_candidates.remove(candidate)
-
-            new_target = target - candidate
-
-            if new_target >= 0:
-                # new_candidates is new
-                results = self.combinationSum_recursive(new_candidates, new_target)
-
-                for result in results:
-                    sorted_result = [candidate] + list(result)
-                    sorted_result.sort()
-                    out.add(tuple(sorted_result))
-
-        self.cache[cache_index] = out
-        return out
-
-    def combinationSum2_old(self, candidates, target):
-
-        result = self.combinationSum_recursive(candidates, target)
-        out = [list(item) for item in result]
-        return out
 
 def main():
     ''' Test combinationSum
@@ -97,7 +57,7 @@ def main():
         ([10,1,2,7,6,1,5], 8),
         ([2,5,2,1,2], 5),
         ([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 20),
-        ([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 27)
+        ([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 27),
     ]
     for candidates, target in test_cases:
         print(candidates, target, solution.combinationSum2(candidates, target))
