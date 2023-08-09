@@ -39,6 +39,21 @@ class Solution:
         # Sort the candidates
         candidates.sort(reverse=True)
 
+        # Filter excessive candidates:
+        # don't include those that overshoot the target
+        cand_filtered = []
+        curr_number = candidates[0] - 1
+        curr_count = 0
+        for cand in candidates:
+            if cand != curr_number:
+                curr_number = cand
+                curr_count = 1
+            else:
+                curr_count += 1
+            if curr_number * curr_count <= target:
+                cand_filtered.append(cand)
+        candidates = cand_filtered
+
         # Keep track of combinations we looked at
         cache = {}
 
