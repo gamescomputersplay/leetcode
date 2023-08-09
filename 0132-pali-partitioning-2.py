@@ -7,10 +7,9 @@ class Solution:
         def find_longest_pali_in_substring(beg, end):
 
             if beg == end:
-                return beg, end
+                return [(beg, end)]
 
-            longest_pali_len = 0
-            longest_pali_beg, longest_pali_end = None, None
+            longest_pali_coords = {}
 
             for start in range(beg, end):
 
@@ -24,24 +23,43 @@ class Solution:
                     while True:
                         if i<beg or j>end or s[i] != s[j]:
                             break
-                        if j-i + 1 > longest_pali_len:
-                            longest_pali_len = j-i + 1
-                            longest_pali_beg, longest_pali_end = i, j
+                        if j-i + 1 > 1:
+                            if j-i + 1 not in longest_pali_coords:
+                                longest_pali_coords[j-i + 1] = []
+                            longest_pali_coords[j-i + 1].append((i, j))
                         i -= 1
                         j += 1
 
-            return longest_pali_beg, longest_pali_end
+            if not longest_pali_coords:
+                return [(beg, beg)]
+
+            lengths = sorted(list(longest_pali_coords.keys()))
+
+            good_enough_palis = []
+            for length in lengths[-4:]:
+                good_enough_palis += longest_pali_coords[length]
+            return good_enough_palis
 
         def count_cuts_rec(beg, end):
-            cuts = 0
-            left, right = find_longest_pali_in_substring(beg, end)
-            print(left, right, s[left:right + 1])
-            if left != beg:
-                cuts += 1 + count_cuts_rec(beg, left-1)
-            if right != end:
-                cuts += 1 + count_cuts_rec(right + 1, end)
 
-            return cuts
+            if (beg, end) in cache_cuts:
+                return cache_cuts[(beg, end)]
+
+            cuts = []
+            longest_pali_coords = find_longest_pali_in_substring(beg, end)
+
+            for left, right in longest_pali_coords:
+
+                cuts.append(0)
+                if left != beg:
+                    cuts[-1] += 1 + count_cuts_rec(beg, left-1)
+                if right != end:
+                    cuts[-1] += 1 + count_cuts_rec(right + 1, end)
+
+            cache_cuts[(beg, end)] = min(cuts)
+            return cache_cuts[(beg, end)]
+
+        cache_cuts = {}
 
         return count_cuts_rec(0, len(s)-1)
 
@@ -95,15 +113,23 @@ def main():
     solution = Solution()
 
     test_cases = [
-        # "aab",
-        # "a",
-        # "ab",
-        # "aabbccdbbsaasc",
-        # "abcabckjhaaabcbcbaaacbacbasd",
-        # "abcabkkkfkkkfkkkfkkkckjhaaabcbcbaaacbacbasd",
-        # exp 452
-        # "apjesgpsxoeiokmqmfgvjslcjukbqxpsobyhjpbgdfruqdkeiszrlmtwgfxyfostpqczidfljwfbbrflkgdvtytbgqalguewnhvvmcgxboycffopmtmhtfizxkmeftcucxpobxmelmjtuzigsxnncxpaibgpuijwhankxbplpyejxmrrjgeoevqozwdtgospohznkoyzocjlracchjqnggbfeebmuvbicbvmpuleywrpzwsihivnrwtxcukwplgtobhgxukwrdlszfaiqxwjvrgxnsveedxseeyeykarqnjrtlaliyudpacctzizcftjlunlgnfwcqqxcqikocqffsjyurzwysfjmswvhbrmshjuzsgpwyubtfbnwajuvrfhlccvfwhxfqthkcwhatktymgxostjlztwdxritygbrbibdgkezvzajizxasjnrcjwzdfvdnwwqeyumkamhzoqhnqjfzwzbixclcxqrtniznemxeahfozp",
+        "aab",
+        "a",
+        "ab",
+        "aabbccdbbsaasc",
+        "abcabckjhaaabcbcbaaacbacbasd",
+        "abcabkkkfkkkfkkkfkkkckjhaaabcbcbaaacbacbasd",
         "aababc", #2
+        # exp 452
+        "apjesgpsxoeiokmqmfgvjslcjukbqxpsobyhjpbgdfruqdkeiszrlmtwgfxyfostpqczidfljwfbbrflkgdvtytbgqalguewnhvvmcgxboycffopmtmhtfizxkmeftcucxpobxmelmjtuzigsxnncxpaibgpuijwhankxbplpyejxmrrjgeoevqozwdtgospohznkoyzocjlracchjqnggbfeebmuvbicbvmpuleywrpzwsihivnrwtxcukwplgtobhgxukwrdlszfaiqxwjvrgxnsveedxseeyeykarqnjrtlaliyudpacctzizcftjlunlgnfwcqqxcqikocqffsjyurzwysfjmswvhbrmshjuzsgpwyubtfbnwajuvrfhlccvfwhxfqthkcwhatktymgxostjlztwdxritygbrbibdgkezvzajizxasjnrcjwzdfvdnwwqeyumkamhzoqhnqjfzwzbixclcxqrtniznemxeahfozp",
+        # exp 273
+        "adabdcaebdcebdcacaaaadbbcadabcbeabaadcbcaaddebdbddcbdacdbbaedbdaaecabdceddccbdeeddccdaabbabbdedaaabcdadbdabeacbeadbaddcbaacdbabcccbaceedbcccedbeecbccaecadccbdbdccbcbaacccbddcccbaedbacdbcaccdcaadcbaebebcceabbdcdeaabdbabadeaaaaedbdbcebcbddebccacacddebecabccbbdcbecbaeedcdacdcbdbebbacddddaabaedabbaaabaddcdaadcccdeebcabacdadbaacdccbeceddeebbbdbaaaaabaeecccaebdeabddacbedededebdebabdbcbdcbadbeeceecdcdbbdcbdbeeebcdcabdeeacabdeaedebbcaacdadaecbccbededceceabdcabdeabbcdecdedadcaebaababeedcaacdbdacbccdbcece",
+        # exp 1
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "abaaaaabba", #2
+        # exp 13
+        "bbaababaabaabaaababbabaabbaaababaaabababaabaababbbaaaaaabbabaababbabaaababbabbbaaaaaaba"
+
     ]
     for s in test_cases:
         result = solution.minCut(s)
