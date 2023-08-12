@@ -35,6 +35,9 @@ class Solution:
 
             return right_tail
 
+        if root is None:
+            return None
+
         recursive_flatten(root)
 
         return None
@@ -51,7 +54,8 @@ def main():
         [1],
         [2, 1],
         [2, None, 3],
-        [2, 1, 3]
+        [2, 1, 3],
+        [1,2,3,4,5,6]
     ]
     for list_tree in test_cases:
         tree = binarytree.level_order_2_tree(list_tree)
