@@ -4,6 +4,27 @@
 class Solution:
     def threeSum(self, nums):
 
+        nums.sort()
+        solution = set()
+
+        for i, a in enumerate(nums[:-2]):
+
+            j, k = i + 1, len(nums) - 1
+
+            while j != k:
+
+                if a + nums[j] + nums[k] == 0:
+                    solution.add((a, nums[j], nums[k]))
+
+                if a + nums[j] + nums[k] < 0:
+                    j += 1
+                else:
+                    k -=1
+        
+        return list(solution)
+
+    def threeSum_n2(self, nums):
+
         solution = set()
         nums.sort()
 
