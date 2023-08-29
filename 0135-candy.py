@@ -11,18 +11,18 @@ class Solution:
         # Candy amount (start with 1 for all)
         candy = [1 for _ in range(len(ratings))]
 
-        # Traverse rating left-to-right, then right-to-left
-        for iterator in [range(len(ratings)), range(len(ratings)-1, -1, -1)]:
+        # Traverse rating left-to-right (look left), then right-to-left (look right)
+        for iterator, neighbour_diff in \
+            [(range(len(ratings)), -1), (range(len(ratings)-1, -1, -1), 1)]:
             for pos in iterator:
 
-                # Look left and right
-                for neighbour_pos in [pos + 1, pos -1]:
+                neighbour_pos = pos + neighbour_diff
 
-                    # Check if condition is fulfilled
-                    if 0 <= neighbour_pos <= len(ratings) - 1:
-                        if ratings[neighbour_pos] < ratings[pos] \
-                           and candy[neighbour_pos] >= candy[pos]:
-                            candy[pos] = candy[neighbour_pos] + 1
+                # Check if condition is fulfilled
+                if 0 <= neighbour_pos <= len(ratings) - 1:
+                    if ratings[neighbour_pos] < ratings[pos] \
+                        and candy[neighbour_pos] >= candy[pos]:
+                        candy[pos] = candy[neighbour_pos] + 1
 
         return sum(candy)
 
