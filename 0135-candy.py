@@ -15,19 +15,14 @@ class Solution:
         for iterator in [range(len(ratings)), range(len(ratings)-1, -1, -1)]:
             for pos in iterator:
 
-                # Look left
-                if pos > 0:
-                    neighbour_candy = candy[pos - 1]
-                    neighbour_rating = ratings[pos - 1]
-                    if neighbour_rating < ratings[pos] and neighbour_candy >= candy[pos]:
-                        candy[pos] = neighbour_candy + 1
+                # Look left and right
+                for neighbour_pos in [pos + 1, pos -1]:
 
-                # Look right
-                if pos < len(ratings) - 1:
-                    neighbour_candy = candy[pos + 1]
-                    neighbour_rating = ratings[pos + 1]
-                    if neighbour_rating < ratings[pos] and neighbour_candy >= candy[pos]:
-                        candy[pos] = neighbour_candy + 1
+                    # Check if condition is fulfilled
+                    if 0 <= neighbour_pos <= len(ratings) - 1:
+                        if ratings[neighbour_pos] < ratings[pos] \
+                           and candy[neighbour_pos] >= candy[pos]:
+                            candy[pos] = candy[neighbour_pos] + 1
 
         return sum(candy)
 
