@@ -4,14 +4,14 @@
 class Solution:
     def minimumTotal(self, triangle):
 
-        for row in range(1, len(triangle)):
-            for col in range(len(triangle[row])):
+        for row_n, row in enumerate(triangle[1:], start=1):
+            for col in range(len(row)):
                 if col == 0:
-                    triangle[row][col] += triangle[row - 1][0]
-                elif col == len(triangle[row]) - 1:
-                    triangle[row][col] += triangle[row - 1][-1]
+                    row[col] += triangle[row_n - 1][0]
+                elif col == len(row) - 1:
+                    row[col] += triangle[row_n - 1][-1]
                 else:
-                    triangle[row][col] += min(triangle[row - 1][col - 1], triangle[row - 1][col])
+                    row[col] += min(triangle[row_n - 1][col - 1], triangle[row_n - 1][col])
         return min(triangle[-1])
 
 def main():
