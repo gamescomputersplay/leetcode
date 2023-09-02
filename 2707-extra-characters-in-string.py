@@ -7,21 +7,23 @@ class Solution:
         # How many skips you need to start from this position
         need_skips = [0] + [float("inf")] * (len(s)) 
 
+        # Go through all positions
         for pos in range(len(s) + 1):
 
+            # Either there was a way to get here or
+            # skip from the previous one - whichever is ffaster
             need_skips[pos] = min(need_skips[pos], need_skips[pos - 1] + 1)
 
+            # Any words match?
             for word in dictionary:
 
-                if s[pos:].startswith(word):
+                # If so, mark the spot where the word ends as having
+                # the same number of skips as this position
+                # (but only overwrite if it is smaller)
+                if s[pos:pos + len(word)] == word:
                     need_skips[pos + len(word)] = min(need_skips[pos], need_skips[pos + len(word)])
 
-        end_nones = 0
-        while need_skips[-1] == float("inf"):
-            need_skips.pop()
-            end_nones += 1
-
-        return need_skips[-1] + end_nones
+        return need_skips[-1]
 
 def main():
     ''' Test minExtraChar
