@@ -4,31 +4,24 @@
 class Solution:
     def minExtraChar(self, s, dictionary):
 
-        can_start_here = [True] + [False] * (len(s)) 
-        farthest_reached = 0
-        removed = 0
+        # How many skips you need to start from this position
+        need_skips = [0] + [float("inf")] * (len(s)) 
 
-        for pos in range(len(s)):
+        for pos in range(len(s) + 1):
 
-            if can_start_here[pos]:
-                have_words = False
-                for word in dictionary:
-                    if s[pos:].startswith(word):
-                        can_start_here[pos + len(word)] = True
-                        farthest_reached = max(farthest_reached, pos + len(word))
-                        have_words = True
+            need_skips[pos] = min(need_skips[pos], need_skips[pos - 1] + 1)
 
-                # No words are found and this is the farthest we gotten
-                if not have_words and pos == farthest_reached:
-                    removed += 1
-                    farthest_reached += 1
-                    can_start_here[pos + 1] = True
+            for word in dictionary:
 
-        # Add all False at the end of can_start_here
-        while not can_start_here.pop():
-            removed += 1
+                if s[pos:].startswith(word):
+                    need_skips[pos + len(word)] = min(need_skips[pos], need_skips[pos + len(word)])
 
-        return removed
+        end_nones = 0
+        while need_skips[-1] == float("inf"):
+            need_skips.pop()
+            end_nones += 1
+
+        return need_skips[-1] + end_nones
 
 def main():
     ''' Test minExtraChar
@@ -39,7 +32,10 @@ def main():
         ("leetscodes", ["leet","code","leetcode"]),
         ("sayhellohellofworlda", ["hello","world"]),
         ("smsvy", ["y","m","s"]), #1
-        ("metzeaencgpgvsckjrqafkxgyzbe", ["r","g","qafkx","t","jr","encgp","tze","yzbe","c","o","gv","at","x","ae"]), #5
+        ("metzeaencgpgvsckjrqafkxgyzbe",
+        ["r","g","qafkx","t","jr","encgp","tze","yzbe","c","o","gv","at","x","ae"]), #5
+        ("kpqcavgyrvihakwwsa",
+        ["sa","ca","r","yrvi","wws"]), #9
     ]
     for s, dictionary in test_cases:
 
