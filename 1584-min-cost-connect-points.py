@@ -12,24 +12,27 @@ class Solution:
 
         while len(clusters) > 1:
 
-            clusters.sort(key=lambda x: len(x))
+            if len(clusters[-1]) > 1:
+                clusters.sort(key=lambda x: -len(x))
 
             min_cost = float("inf")
-            best_cluster_to_connect = None
+            closest_cluster = None
 
-            for point_from in clusters[0]:
+            for point_from in clusters[-1]:
 
-                for cluster in clusters[1:]:
+                for i, cluster in enumerate(clusters[:-1]):
 
                     for point_to in cluster:
 
                         cost = abs(point_from[0] - point_to[0]) + abs(point_from[1] - point_to[1])
                         if cost < min_cost:
                             min_cost = cost
-                            best_cluster_to_connect = cluster
+                            closest_cluster = i
 
-            clusters[0] = clusters[0].union(best_cluster_to_connect)
-            clusters.remove(best_cluster_to_connect)
+            clusters[closest_cluster] = \
+                clusters[closest_cluster].union(clusters[-1])
+            # Remove "-1" cluster
+            clusters.pop()
             total_cost += min_cost
 
         return total_cost
