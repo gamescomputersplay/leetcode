@@ -4,11 +4,12 @@
 class Solution:
     def findItinerary(self, tickets):
 
-        def try_next(visited, pool):
+        def try_next(visited):
             nonlocal answer
+
             if answer is not None:
                 return None
-            
+
             # Answer is found, pool is empty
             if not pool and answer is None:
                 answer = visited
@@ -23,15 +24,20 @@ class Solution:
                 new_visited.append(next_stop)
 
                 # New pool, remove ticket and adjust
-                new_pool = {key: value.copy() for key, value in pool.items()}
-                new_pool[we_are_at][next_stop] -= 1
-                if new_pool[we_are_at][next_stop] == 0:
-                    del new_pool[we_are_at][next_stop]
-                if len(new_pool[we_are_at]) == 0:
-                    del new_pool[we_are_at]
-                    
-                try_next(new_visited, new_pool)
-                
+                pool[we_are_at][next_stop] -= 1
+                if pool[we_are_at][next_stop] == 0:
+                    del pool[we_are_at][next_stop]
+                if len(pool[we_are_at]) == 0:
+                    del pool[we_are_at]
+
+                try_next(new_visited)
+
+                if we_are_at not in pool:
+                    pool[we_are_at] = {}
+                if next_stop not in pool[we_are_at]:
+                    pool[we_are_at][next_stop] = 0
+                pool[we_are_at][next_stop] += 1
+
 
         # Pool of tickets with counts:
         # {from1: {to1: 1, to2:2,...}, ...}
@@ -44,7 +50,7 @@ class Solution:
             pool[frm][to] += 1
 
         answer = None
-        try_next(["JFK",], pool)
+        try_next(["JFK",])
 
         return answer
 
