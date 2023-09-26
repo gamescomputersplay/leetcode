@@ -4,78 +4,57 @@
 class Solution:
     def removeDuplicateLetters(self, s):
 
-        # No changes for 1-letter string
-        if len(s) == 1:
-            return s
+        def keep_leftmost(letter):
+            ''' Keep only leftmost instance of letter
+            '''
+            nonlocal left_smaller
+            while len(letters[letter]) > 1 and letters[letter][0] < left_smaller:
+                pos = letters[letter].pop(0)
+                s[pos] = ""
 
-        # Calculate letters' frrquencies
-        freq = {}
-        for ch in s:
-            freq[ch] = freq.get(ch, 0) + 1
+            for to_delete in letters[letter][1:]:
+                s[to_delete] = ""
+            letters[letter] = [letters[letter][0]]
+            left_smaller = letters[letter][0]
 
-        string = list(s)
 
-        # Pointers to go through the original string
-        p_left, p_right = 0, 1
-
-        while p_right < len(s):
-
-            # Delete repeated character
-            if string[p_left] == string[p_right]:
-                freq[string[p_left]] -= 1
-                string[p_right] = ""
-                p_right += 1
-
-            # Right order - do nothing, go to the next one
-            elif string[p_left] < string[p_right]:
-                p_left = p_right
-                p_right += 1
-
-            # Wrong order
-            elif string[p_left] > string[p_right]:
-                # Delete left character if we can
-                if freq[string[p_left]] > 1:
-                    freq[string[p_left]] -= 1
-                    string[p_left] = ""
-                    while p_left >= 0 and string[p_left] == "":
-                        p_left -= 1
-                    if p_left == -1:
-                        p_left = p_right
-                        p_right += 1
-                # Or just move on
+        def try_to_delete_up_to(up_to_pos):
+            ''' Try to delete letters to the left of position.
+            Only delete if there is an instance to the right of position
+            Also, if you keep a letter, don't delete smaller letters to the left
+            '''
+            
+            for pos in range(up_to_pos - 1, -1, -1):
+                if s[pos] == "":
+                    continue
+                letter = s[pos]
+                if letters[letter][-1] > up_to_pos and letter >= s[up_to_pos]:
+                    pos = letters[letter].pop(0)
+                    s[pos] = ""
                 else:
-                    p_left = p_right
-                    p_right += 1
+                    break
 
-        # Delete remaining duplicates
-        for pos in range(len(s)-1, -1, -1):
-            if string[pos] != "" and freq[string[pos]] > 1:
-                freq[string[pos]] -= 1
-                string[pos] = ""
 
-        return "".join(string)
-
-    def removeDuplicateLettersSlow(self, s):
-        ''' Slow but surer way, to check validity
-        '''
+        # List if way easier to work with
         s = list(s)
-        while True:
-            for pos in range(len(s)-2, -1, -1):
-                if s[pos] >= s[pos + 1] and s.count(s[pos]) > 1:
-                    del s[pos]
-                    break
-            else:
-                break
 
-        while True:
-            for pos in range(len(s)-1, -1, -1):
-                if s.count(s[pos]) > 1:
-                    del s[pos]
-                    break
-            else:
-                break
+        # List of all letters and their position
+        # {"a": [2, 3, 6], "b": [1, 5], ...}
+        letters = {}
+        for pos, ch in enumerate(s):
+            if ch not in letters:
+                letters[ch] = []
+            letters[ch].append(pos)
+
+        left_smaller = 0
+
+        for letter in sorted(letters.keys()):
+            print(letter, s)
+            keep_leftmost(letter)
+            try_to_delete_up_to(letters[letter][0])
 
         return "".join(s)
+
 
 def main():
     ''' Test removeDuplicateLetters
@@ -84,30 +63,17 @@ def main():
 
     test_cases = [
         # "bcabc",
-        # "cbacdcbc",
+        "cbacdcbc",
         # "dddeffsbbbbaaebabbsf",
-        "abacb",
+        # "abacb",
+        # "bcbac", # bac
     ]
 
     for s in test_cases:
         result = solution.removeDuplicateLetters(s)
-        result2 = solution.removeDuplicateLettersSlow(s)
-        print(s, result, result == result2)
-
-def random_test(runs):
-    solution = Solution()
-    for _ in range(runs):
-        s = random.choices("abcdefg", k=10)
-        result = solution.removeDuplicateLetters(s)
-        result2 = solution.removeDuplicateLettersSlow(s)
-        if result != result2:
-            print(f"Failed on {testcase}: {result} != {result2}")
-            return
-    print(f"{runs} random tests okay")     
+        print(s, result)
 
 
 if __name__ == "__main__":
-    import random
     main()
-    # random_test(10000)
         
