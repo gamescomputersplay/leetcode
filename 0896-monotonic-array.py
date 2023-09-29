@@ -6,12 +6,14 @@ class Solution:
 
         goes_up = False
         goes_down = False
-        
-        for pos, num in enumerate(nums[:-1]):
-            if nums[pos + 1] > num:
+        prev = nums[0]
+
+        for num in nums[1:]:
+            if num > prev:
                 goes_up = True
-            elif nums[pos + 1] < num:
+            elif num < prev:
                 goes_down = True
+            prev = num
             if goes_up and goes_down:
                 return False
 
