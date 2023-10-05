@@ -3,6 +3,25 @@
 
 class Solution:
     def majorityElement(self, nums):
+        nums.sort()
+        
+        prev = None
+        count = 0
+        majority = set()
+
+        for num in nums:
+
+            if num != prev:
+                prev = num
+                count = 1
+            else:
+                count += 1
+            if count > len(nums) / 3:
+                majority.add(num)
+
+        return list(majority)
+
+    def majorityElement_linear_space(self, nums):
 
         majority = set()
         count = {}
