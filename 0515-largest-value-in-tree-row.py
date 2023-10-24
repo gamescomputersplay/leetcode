@@ -7,6 +7,28 @@ from classes.binarytree import TreeNode
 class Solution:
     def largestValues(self, root):
 
+        def walk(node, level):
+
+            if len(largest) < level + 1:
+                largest.append(node.val)
+            else:
+                largest[level] = max(largest[level], node.val)
+
+            if node.left is not None:
+                walk(node.left, level + 1)
+            if node.right is not None:
+                walk(node.right, level + 1)
+
+        if root is None:
+            return []
+
+        largest = []
+        walk(root, 0)
+
+        return largest
+
+    def largestValues_slow(self, root):
+
         def get_largest_val_rec(node):
 
             if node.left is None and node.right is None:
