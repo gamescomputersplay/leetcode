@@ -7,24 +7,32 @@ from classes.binarytree import TreeNode
 class Solution:
     def getDirections(self, root, startValue, destValue):
 
-        def get_path_to_node(node, value, path_so_far):
-            nonlocal path_to_find
-            if path_to_find != "":
-                return
-            if node.val == value:
-                path_to_find = path_so_far
-                return 
-            for letter, next_node in zip(("L", "R"), (node.left, node.right)):
-                if next_node is not None:
-                    get_path_to_node(next_node, value, path_so_far+letter)
+        path_to, path_from = None, None
 
-        path_to_find = ""
-        get_path_to_node(root, startValue, "")
-        path_from = path_to_find
+        node_history = [root]
+        current_path = []
 
-        path_to_find = ""
-        get_path_to_node(root, destValue, "")
-        path_to = path_to_find
+        visited = set()
+
+        while True:
+            if node_history[-1].val == startValue:
+                path_from = "".join(current_path)
+            if node_history[-1].val == destValue:
+                path_to = "".join(current_path)
+            if path_to is not None and path_from is not None:
+                break
+            
+            if node_history[-1].left is not None and node_history[-1].left.val not in visited:
+                node_history.append(node_history[-1].left)
+                visited.add(node_history[-1].val)
+                current_path.append("L")
+            elif node_history[-1].right is not None and node_history[-1].right.val not in visited:
+                node_history.append(node_history[-1].right)
+                visited.add(node_history[-1].val)
+                current_path.append("R")
+            else:
+                node_history.pop()
+                current_path.pop()
 
         shared_path = 0
         for i in range(min(len(path_to), len(path_from))):
@@ -43,7 +51,7 @@ def main():
     solution = Solution()
 
     test_cases = [
-        ([5,1,2,3,None,6,4], 3, 4),
+        ([5,1,2,3,None,6,4], 3, 2),
         ([2,1], 2, 1)
             ]
     for list_tree, startValue, destValue in test_cases:
