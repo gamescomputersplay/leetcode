@@ -4,12 +4,12 @@
 class Solution:
     def luckyNumbers (self, matrix):
 
-        rows_mins = [float("inf") for _ in range(len(matrix))]
+        rows_mins = []
         cols_maxs = [float("-inf") for _ in range(len(matrix[0]))]
 
-        for row_n, row in enumerate(matrix):
+        for row in matrix:
+            rows_mins.append(min(row))
             for col_n, element in enumerate(row):
-                rows_mins[row_n] = min(rows_mins[row_n], element)
                 cols_maxs[col_n] = max(cols_maxs[col_n], element)
 
         return list(set(rows_mins).intersection(set(cols_maxs)))
